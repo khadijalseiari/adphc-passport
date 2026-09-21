@@ -1,0 +1,1893 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ADPHC Community Health Experience Passport</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* ============================= TOKENS ============================= */
+:root{
+  --navy:#063D68; --teal:#0E7C86; --turquoise:#18B0BB; --aqua:#7EC6D1;
+  --stone:#BDC7BC; --aqua-pale:#E2F4F8; --white:#FFFFFF;
+  --ink-navy:#063D68; --ink-teal:#0E7C86; --ink-turquoise:#18B0BB;
+  --ink-blue:#2C6E9E; --ink-green:#4C8C6B; --ink-purple:#6B5B95;
+
+  --bg:#EAF5F7; --bg-pattern:var(--aqua-pale);
+  --surface:#FFFFFF; --surface-2:#F4FAFB; --surface-sunken:#DDEFF2;
+  --text-primary:#0A2E44; --text-secondary:#3E5C6E; --text-muted:#728A94;
+  --border:#D6E7EA; --border-strong:#B9D6DA;
+  --accent:var(--turquoise); --accent-strong:var(--navy);
+  --accent-contrast:#FFFFFF;
+  --shadow:0 10px 30px -12px rgba(6,61,104,.25);
+  --shadow-sm:0 2px 8px rgba(6,61,104,.10);
+  --radius-lg:22px; --radius-md:14px; --radius-sm:9px;
+  --success:#2F8F5B; --warning:#B8862B; --danger:#B84A3E;
+  --font-body:'Source Sans 3','Source Sans Pro',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#051A2B; --bg-pattern:#072238;
+    --surface:#0B2A42; --surface-2:#0E3350; --surface-sunken:#082439;
+    --text-primary:#EAF6F9; --text-secondary:#AFCBD6; --text-muted:#7C9BAA;
+    --border:#154764; --border-strong:#1E5A7B;
+    --accent:var(--turquoise); --accent-strong:#4FD0DA; --accent-contrast:#052033;
+    --shadow:0 10px 30px -12px rgba(0,0,0,.55);
+    --shadow-sm:0 2px 8px rgba(0,0,0,.35);
+    --success:#4FBE85; --warning:#E0AC52; --danger:#E27A6C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#051A2B; --bg-pattern:#072238;
+  --surface:#0B2A42; --surface-2:#0E3350; --surface-sunken:#082439;
+  --text-primary:#EAF6F9; --text-secondary:#AFCBD6; --text-muted:#7C9BAA;
+  --border:#154764; --border-strong:#1E5A7B;
+  --accent:var(--turquoise); --accent-strong:#4FD0DA; --accent-contrast:#052033;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.55);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.35);
+  --success:#4FBE85; --warning:#E0AC52; --danger:#E27A6C;
+}
+
+*{box-sizing:border-box;}
+html{overflow-x:hidden;}
+body{
+  margin:0; background:var(--bg); color:var(--text-primary);
+  font-family:var(--font-body); -webkit-font-smoothing:antialiased;
+  overflow-x:hidden; max-width:100vw;
+  padding-top:max(20px, env(safe-area-inset-top));
+  padding-bottom:max(20px, env(safe-area-inset-bottom));
+  padding-left:max(16px, env(safe-area-inset-left));
+  padding-right:max(16px, env(safe-area-inset-right));
+  background-image:
+    radial-gradient(circle at 8% 6%, color-mix(in srgb, var(--turquoise) 10%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 92% 94%, color-mix(in srgb, var(--navy) 12%, transparent) 0%, transparent 45%);
+}
+h1,h2,h3,h4{text-wrap:balance; margin:0;}
+button{font-family:inherit;}
+a{color:inherit;}
+.hidden{display:none!important;}
+::selection{background:var(--turquoise); color:#fff;}
+
+/* ============================= SHELL ============================= */
+#app{display:flex; justify-content:center;}
+.phone-shell{
+  width:100%; max-width:430px; min-height:80vh;
+  background:var(--surface); border-radius:28px; box-shadow:var(--shadow);
+  border:1px solid var(--border); overflow:hidden; position:relative;
+  display:flex; flex-direction:column;
+}
+.admin-shell{
+  width:100%; max-width:1180px; min-height:80vh;
+  background:var(--surface); border-radius:var(--radius-lg); box-shadow:var(--shadow);
+  border:1px solid var(--border); overflow:hidden;
+}
+.screen{display:flex; flex-direction:column; min-height:80vh; flex:1;}
+.screen-pad{padding:28px 24px 24px;}
+.scroll{overflow-y:auto;}
+
+/* ============================= BRAND ============================= */
+.wordmark{display:flex; align-items:center; gap:10px;}
+.wordmark__mark{width:38px; height:38px; position:relative; flex:none;}
+.wordmark__mark svg{width:100%; height:100%;}
+.wordmark__text{display:flex; flex-direction:column; line-height:1.1;}
+.wordmark__text b{font-size:16px; font-weight:900; letter-spacing:1.5px; color:var(--navy);}
+:root[data-theme="dark"] .wordmark__text b{color:var(--accent-strong);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wordmark__text b{color:var(--accent-strong);}}
+.wordmark__text span{font-size:9.5px; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase;}
+.brand-note{font-size:11px; color:var(--text-muted); text-align:center; padding:10px 20px 4px;}
+.logo-badge{display:inline-flex; background:#fff; border-radius:14px; box-shadow:0 6px 18px rgba(0,0,0,.18);}
+
+.petal-field{position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity:.10;}
+.petal-field svg{position:absolute;}
+
+/* ============================= ENTRANCE ============================= */
+.entrance{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+  padding:40px 26px 30px; text-align:center; position:relative;
+  background:linear-gradient(180deg, var(--navy) 0%, #0A4E80 60%, var(--teal) 100%);
+  color:#fff;
+}
+.entrance .wordmark__mark{width:64px; height:64px;}
+.entrance h1{font-size:26px; font-weight:900; letter-spacing:.5px; margin-top:18px;}
+.entrance p{font-size:14.5px; color:#CFE9EE; max-width:300px; margin-top:10px; line-height:1.5;}
+.entrance__stamp-preview{margin:22px 0; opacity:.9;}
+.btn{
+  appearance:none; border:none; cursor:pointer; border-radius:999px;
+  font-family:inherit; font-weight:700; font-size:15px; letter-spacing:.3px;
+  padding:15px 26px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--turquoise); color:#05303A; box-shadow:0 8px 20px -8px rgba(24,176,187,.6);}
+.btn-light{background:#fff; color:var(--navy);}
+.btn-outline{background:transparent; color:inherit; border:1.5px solid currentColor;}
+.btn-ghost{background:transparent; color:var(--text-secondary); font-weight:600; padding:10px 14px;}
+.btn-block{width:100%;}
+.btn-sm{padding:9px 14px; font-size:13px;}
+.btn[disabled]{opacity:.5; cursor:not-allowed;}
+.entrance__links{display:flex; gap:16px; font-size:11.5px; color:#BFE0E6;}
+.entrance__links button{background:none; border:none; color:inherit; text-decoration:underline; cursor:pointer; font-size:inherit; font-family:inherit;}
+
+/* ============================= FORMS ============================= */
+.field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px; text-align:left;}
+.field label{font-size:12.5px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.5px;}
+.field input, .field select, .field textarea{
+  font-family:inherit; font-size:15px; padding:12px 14px; border-radius:var(--radius-sm);
+  border:1.5px solid var(--border); background:var(--surface-2); color:var(--text-primary);
+}
+.field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent);}
+.field-hint{font-size:11.5px; color:var(--text-muted);}
+.form-row{display:flex; gap:10px;}
+.form-row > *{flex:1;}
+.checkline{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--text-secondary);}
+
+/* ============================= COVER ============================= */
+.cover{
+  flex:1; display:flex; flex-direction:column; justify-content:space-between; position:relative;
+  padding:30px 26px 28px; color:#fff; overflow:hidden;
+  background:
+    radial-gradient(circle at 85% -10%, rgba(255,255,255,.14), transparent 45%),
+    linear-gradient(155deg, var(--navy) 0%, #0B4A78 55%, var(--teal) 120%);
+}
+.cover__top{display:flex; justify-content:space-between; align-items:flex-start;}
+.cover__badge{font-family:var(--font-mono); font-size:10px; letter-spacing:1.5px; background:rgba(255,255,255,.14); padding:5px 10px; border-radius:6px;}
+.cover__title{margin-top:34px;}
+.cover__title small{display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:3px; color:#BFE0E6; margin-bottom:6px;}
+.cover__title h1{font-size:23px; font-weight:900; letter-spacing:.3px;}
+.cover__name{margin-top:20px; font-size:19px; font-weight:700;}
+.cover__id{font-family:var(--font-mono); font-size:12.5px; color:#CFE9EE; margin-top:3px; letter-spacing:.5px;}
+.cover__progress{margin-top:26px;}
+.cover__progress-row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+.cover__progress-row b{font-size:15px;}
+.cover__progress-row span{font-size:11.5px; color:#BFE0E6;}
+.dot-track{display:flex; gap:6px; flex-wrap:wrap;}
+.dot-track i{width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,.25); display:block;}
+.dot-track i.filled{background:var(--turquoise); box-shadow:0 0 0 2px rgba(255,255,255,.35);}
+.cover__cta{margin-top:26px;}
+.cover__foot{display:flex; justify-content:center; gap:18px; margin-top:18px; font-size:11px; color:#AFD8DE;}
+.cover__foot button{background:none;border:none;color:inherit;text-decoration:underline;cursor:pointer;font-family:inherit;font-size:inherit;}
+
+/* ============================= EXPLORE / JOURNEY ============================= */
+.journey-hero{
+  position:relative; overflow:hidden; padding:26px 24px 22px; color:#fff;
+  background:
+    radial-gradient(circle at 85% -10%, rgba(255,255,255,.14), transparent 45%),
+    linear-gradient(155deg, var(--navy) 0%, #0B4A78 55%, var(--teal) 120%);
+}
+.journey-hero h1{font-size:21px; font-weight:900; letter-spacing:.2px; margin-top:16px;}
+.journey-hero p{font-size:13px; color:#CFE9EE; margin-top:8px; line-height:1.5;}
+.journey-hero__progress{margin-top:18px;}
+.journey-hero__progress span{font-size:11px; color:#BFE0E6; display:block; margin-bottom:6px;}
+.journey-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media (max-width:340px){ .journey-grid{grid-template-columns:1fr;} }
+.dest-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+  padding:16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
+  box-shadow:var(--shadow-sm); cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.dest-card:active{transform:scale(.97);}
+.dest-card b{font-size:12.5px; font-weight:700; color:var(--text-primary); line-height:1.3;}
+.dest-card span{font-size:10.5px; color:var(--text-muted);}
+.dest-card__icon{width:52px; height:52px; border-radius:50%; background:var(--surface-2); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--accent-strong); position:relative;}
+.dest-card--done .dest-card__icon{background:color-mix(in srgb, var(--success) 16%, transparent); border-color:var(--success);}
+.dest-card__check{position:absolute; bottom:-3px; right:-3px; width:18px; height:18px; border-radius:50%; background:var(--success); color:#fff; display:flex; align-items:center; justify-content:center; border:2px solid var(--surface);}
+
+/* ============================= GIFT ICON (top of Explore Departments header) ============================= */
+.gift-badge-top{
+  width:34px; height:34px; border-radius:50%; border:none; flex:none;
+  background:linear-gradient(155deg, var(--turquoise), var(--teal));
+  color:#fff; box-shadow:var(--shadow-sm); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  animation:giftPulse 2.4s ease-in-out infinite; -webkit-tap-highlight-color:transparent;
+}
+.gift-badge-top--done{background:rgba(255,255,255,.16); color:#fff; animation:none;}
+@keyframes giftPulse{0%,100%{box-shadow:0 0 0 0 rgba(24,176,187,.45), var(--shadow-sm);}50%{box-shadow:0 0 0 6px rgba(24,176,187,0), var(--shadow-sm);}}
+@media (prefers-reduced-motion:reduce){ .gift-badge-top{animation:none;} }
+
+/* ============================= PASSPORT PAGES ============================= */
+.passport-head{
+  padding:16px 20px 12px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border); background:var(--surface-2);
+}
+.passport-head__title{font-size:13px; font-weight:700; letter-spacing:.4px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;}
+.iconbtn{width:34px; height:34px; border-radius:50%; border:1.5px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary);}
+.iconbtn:hover{border-color:var(--accent); color:var(--accent-strong);}
+.passport-body{flex:1; min-height:480px; position:relative; perspective:1400px; overflow:hidden; background:var(--bg-pattern);}
+.passport-page{
+  position:absolute; inset:0; padding:22px 20px calc(90px + env(safe-area-inset-bottom)); overflow-y:auto;
+  transform-origin:left center; transition:transform .32s ease, opacity .32s ease;
+}
+.passport-page.leaving-l{transform:rotateY(70deg); opacity:0;}
+.passport-page.leaving-r{transform:rotateY(-70deg); opacity:0;}
+.passport-page.entering{transform:rotateY(0deg); opacity:1;}
+@media (prefers-reduced-motion:reduce){ .passport-page{transition:none!important;} }
+.page-watermark{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:.06; pointer-events:none;}
+.page-watermark svg{width:70%; height:70%;}
+.dept-head{display:flex; align-items:center; gap:12px; margin-bottom:6px; position:relative;}
+.dept-head__icon{width:42px;height:42px;border-radius:50%; background:var(--surface); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--accent-strong); box-shadow:var(--shadow-sm);}
+.dept-head__icon svg{width:22px;height:22px;}
+.dept-head h2{font-size:17px; font-weight:800; color:var(--text-primary);}
+.dept-head span{font-size:11.5px; color:var(--text-muted);}
+.stamp-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; position:relative;}
+.stamp-slot{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+  padding:12px 10px 10px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
+  box-shadow:var(--shadow-sm);
+}
+.stamp-slot{transition:box-shadow .25s ease, border-color .25s ease;}
+.stamp-slot.empty{background:var(--surface-sunken); border-style:dashed; box-shadow:none;}
+.stamp-slot.highlight{box-shadow:0 0 0 3px var(--accent), var(--shadow-sm); border-color:var(--accent);}
+.stamp-slot .ink-stamp{width:88px; height:88px;}
+.stamp-slot__empty-icon{width:88px;height:88px; border-radius:50%; border:1.8px dashed var(--border-strong); display:flex; align-items:center; justify-content:center; color:var(--border-strong);}
+.stamp-slot__empty-icon svg{width:30px;height:30px;}
+.stamp-slot b{font-size:11.5px; font-weight:700; color:var(--text-primary);}
+.stamp-slot span{font-size:10px; color:var(--text-muted);}
+.tag-optional{font-size:9px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-muted); background:var(--surface-2); border:1px solid var(--border); padding:2px 6px; border-radius:99px;}
+.page-dots{position:absolute; bottom:14px; left:0; right:0; display:flex; justify-content:center; gap:6px; z-index:3;}
+.page-dots i{width:6px; height:6px; border-radius:50%; background:var(--border-strong); display:block;}
+.page-dots i.on{background:var(--accent-strong); width:16px; border-radius:4px;}
+.passport-nav{display:flex; justify-content:space-between; padding:0 16px; position:absolute; top:50%; left:0; right:0; transform:translateY(-50%); pointer-events:none; z-index:3;}
+.passport-nav button{pointer-events:auto;}
+
+/* ============================= DEMO PANEL ============================= */
+.demo-fab{position:fixed; bottom:calc(22px + env(safe-area-inset-bottom)); right:calc(50% - 195px); z-index:20; background:var(--navy); color:#fff; border:none; border-radius:999px; padding:11px 16px; font-weight:700; font-size:12.5px; box-shadow:var(--shadow); cursor:pointer; display:flex; gap:7px; align-items:center;}
+@media (max-width:480px){.demo-fab{right:16px;}}
+.demo-sheet{position:fixed; inset:0; background:rgba(5,20,30,.55); z-index:30; display:flex; align-items:flex-end; justify-content:center;}
+.demo-sheet__panel{background:var(--surface); width:100%; max-width:430px; border-radius:20px 20px 0 0; padding:18px 18px calc(22px + env(safe-area-inset-bottom)); max-height:80vh; max-height:80svh; overflow-y:auto;}
+.demo-sheet__panel h3{font-size:15px; margin-bottom:2px;}
+.demo-sheet__panel p{font-size:12px; color:var(--text-muted); margin:0 0 14px;}
+.demo-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);}
+.demo-row__label{display:flex; flex-direction:column;}
+.demo-row__label b{font-size:13px;}
+.demo-row__label span{font-size:11px; color:var(--text-muted);}
+.pill-status{font-size:10px; font-weight:700; padding:3px 8px; border-radius:99px; text-transform:uppercase; letter-spacing:.3px;}
+.pill-status.done{background:color-mix(in srgb, var(--success) 18%, transparent); color:var(--success);}
+
+/* ============================= STAMP ANIMATION OVERLAY ============================= */
+.stamp-overlay{position:fixed; inset:0; z-index:50; background:rgba(4,20,32,.32); display:flex; align-items:center; justify-content:center;
+  padding:max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));}
+.stamp-overlay__card{width:100%; max-width:340px; background:var(--surface); border-radius:24px; padding:26px 20px 24px; text-align:center; position:relative; overflow:hidden;}
+.stamp-overlay__slot{width:150px; height:150px; margin:6px auto 14px; border-radius:50%; border:2px dashed var(--border-strong); display:flex; align-items:center; justify-content:center; position:relative;}
+.stamp-overlay__slot.glow{border-color:var(--accent); box-shadow:0 0 0 8px color-mix(in srgb, var(--turquoise) 15%, transparent);}
+.stamp-tool{position:absolute; top:-140px; left:50%; width:64px; height:90px; margin-left:-32px; transition:top .32s cubic-bezier(.5,0,.75,0);}
+.stamp-tool.drop{top:22px;}
+.stamp-tool.impact{transition:transform .16s ease; transform:scale(1.06) translateY(0);}
+.stamp-tool.retreat{transition:top .38s ease .18s; top:-160px;}
+.stamp-tool svg{width:100%; height:100%;}
+.stamp-ink-reveal{opacity:0; transform:scale(.7); transition:opacity .18s ease, transform .28s cubic-bezier(.2,1.4,.5,1);}
+.stamp-ink-reveal.show{opacity:1; transform:scale(1);}
+.stamp-overlay__msg{font-weight:800; font-size:17px; color:var(--navy); opacity:0; transform:translateY(6px); transition:opacity .3s ease, transform .3s ease;}
+:root[data-theme="dark"] .stamp-overlay__msg{color:var(--accent-strong);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stamp-overlay__msg{color:var(--accent-strong);}}
+.stamp-overlay__msg.show{opacity:1; transform:translateY(0);}
+.stamp-overlay__progress{font-size:12.5px; color:var(--text-muted); margin-top:4px; opacity:0; transition:opacity .3s ease .1s;}
+.stamp-overlay__progress.show{opacity:1;}
+.stamp-overlay__already{padding:10px 0 4px;}
+@media (prefers-reduced-motion:reduce){ .stamp-tool, .stamp-ink-reveal, .stamp-overlay__msg, .stamp-overlay__progress{transition:none!important;} }
+.stamp-slot.empty.tappable{cursor:pointer; -webkit-tap-highlight-color:transparent;}
+.stamp-slot.empty.tappable:active{transform:scale(.97);}
+.stamp-slot__empty-icon.tappable-icon{position:relative;}
+.stamp-slot__scan-hint{font-size:9px; color:var(--accent-strong); font-weight:700; text-transform:uppercase; letter-spacing:.4px;}
+
+/* ============================= LIVE STAMP-ON-PAGE EFFECT =============================
+   After a successful scan, the stamp presses down directly onto its real position in the
+   passport grid — no card, no dark backdrop, the passport page itself never leaves view.
+   A transparent tap-guard just prevents accidental double-taps on other slots mid-animation. */
+.stamp-fx-guard{position:fixed; inset:0; z-index:64; background:transparent;}
+.live-stamp-fx{position:fixed; z-index:65; pointer-events:none;}
+.live-stamp-fx__tool{position:absolute; top:-70px; left:50%; width:46px; height:64px; margin-left:-23px; transition:top .26s cubic-bezier(.5,0,.75,0);}
+.live-stamp-fx__tool.drop{top:8px;}
+.live-stamp-fx__tool.impact{transition:transform .14s ease; transform:scale(1.05);}
+.live-stamp-fx__tool.retreat{transition:top .3s ease .1s; top:-90px;}
+.live-stamp-fx__tool svg{width:100%; height:100%;}
+.live-stamp-fx__ink{position:absolute; inset:0; opacity:0; transform:scale(.72); transition:opacity .16s ease, transform .24s cubic-bezier(.2,1.4,.5,1);}
+.live-stamp-fx__ink.show{opacity:1; transform:scale(1);}
+.live-stamp-fx__ink svg{width:100%; height:100%; display:block;}
+@media (prefers-reduced-motion:reduce){ .live-stamp-fx__tool, .live-stamp-fx__ink{transition:none!important;} }
+
+/* ============================= IN-APP CAMERA QR SCANNER ============================= */
+.scan-overlay{position:fixed; inset:0; z-index:60; background:#000; display:flex; flex-direction:column;}
+.scan-overlay__top{position:absolute; top:0; left:0; right:0; z-index:3; display:flex; align-items:center; justify-content:space-between; color:#fff;
+  padding:max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));}
+.scan-overlay__title{font-size:13px; font-weight:700; text-align:center; flex:1; text-shadow:0 1px 4px rgba(0,0,0,.5);}
+.scan-overlay__close{background:rgba(255,255,255,.18); border:none; color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+.scan-overlay__video-wrap{flex:1; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#000;}
+.scan-overlay__video-wrap video{width:100%; height:100%; object-fit:cover;}
+.scan-overlay__frame{position:absolute; width:min(68vw,260px); height:min(68vw,260px); border:3px solid rgba(255,255,255,.85); border-radius:20px; box-shadow:0 0 0 999px rgba(0,0,0,.42);}
+.scan-overlay__frame::before,.scan-overlay__frame::after{content:'';position:absolute; width:26px; height:26px; border-color:var(--accent-strong,#2AB6C4); border-style:solid;}
+.scan-overlay__frame::before{top:-3px; left:-3px; border-width:4px 0 0 4px; border-top-left-radius:12px;}
+.scan-overlay__frame::after{bottom:-3px; right:-3px; border-width:0 4px 4px 0; border-bottom-right-radius:12px;}
+.scan-overlay__bottom{position:absolute; left:0; right:0; bottom:0; z-index:3; text-align:center;
+  padding:18px max(20px, env(safe-area-inset-right)) calc(22px + env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));}
+.scan-overlay__status{color:#fff; font-size:13px; font-weight:600; min-height:20px; text-shadow:0 1px 4px rgba(0,0,0,.6);}
+.scan-overlay__status.warn{color:#ffd25a;}
+.scan-overlay__fallback{margin-top:14px; background:rgba(255,255,255,.95); border-radius:18px; padding:18px 18px 16px; text-align:left; color:var(--navy,#0A2E44);}
+.scan-overlay__fallback h4{font-size:14px; margin-bottom:4px;}
+.scan-overlay__fallback p{font-size:12px; color:var(--text-muted,#5b6b76); margin-bottom:12px;}
+
+/* ============================= CELEBRATION / REWARD ============================= */
+.burst{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
+.burst i{position:absolute; top:50%; left:50%; width:16px; height:16px; opacity:0; animation:burstOut 1.1s ease-out forwards;}
+@keyframes burstOut{0%{opacity:1; transform:translate(-50%,-50%) rotate(0) scale(.4);}100%{opacity:0; transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--dr)) scale(1);}}
+@media (prefers-reduced-motion:reduce){ .burst{display:none;} }
+
+.reward-card{
+  margin:6px 0; border-radius:20px; padding:22px 20px; text-align:center; color:#fff;
+  background:linear-gradient(155deg, var(--navy), var(--teal));
+  position:relative; overflow:hidden;
+}
+.reward-card__ribbon{font-family:var(--font-mono); font-size:10.5px; letter-spacing:2px; color:#CFE9EE;}
+.reward-card h2{font-size:20px; font-weight:900; margin-top:8px;}
+.reward-card__qr{background:#fff; border-radius:14px; padding:12px; display:inline-block; margin-top:16px;}
+.reward-card__code{font-family:var(--font-mono); font-size:14px; letter-spacing:2px; margin-top:12px;}
+
+/* ============================= GENERIC UI ============================= */
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; box-shadow:var(--shadow-sm);}
+.stack{display:flex; flex-direction:column; gap:12px;}
+.row{display:flex; align-items:center; gap:10px;}
+.between{justify-content:space-between;}
+.muted{color:var(--text-muted);}
+.small{font-size:12px;}
+.mono{font-family:var(--font-mono);}
+.divider{height:1px; background:var(--border); margin:14px 0;}
+.toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--navy); color:#fff; padding:10px 18px; border-radius:99px; font-size:13px; z-index:80; box-shadow:var(--shadow); opacity:0; transition:opacity .2s ease, transform .2s ease;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(-4px);}
+.chip{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 9px; border-radius:99px; background:var(--surface-2); border:1px solid var(--border); color:var(--text-secondary);}
+
+/* ============================= ADMIN ============================= */
+.admin-layout{display:flex; min-height:80vh;}
+.admin-nav{width:200px; flex:none; background:var(--surface-2); border-right:1px solid var(--border); padding:18px 10px; display:flex; flex-direction:column; gap:2px;}
+.admin-nav button{text-align:left; background:none; border:none; padding:10px 12px; border-radius:var(--radius-sm); font-size:13.5px; font-weight:600; color:var(--text-secondary); cursor:pointer;}
+.admin-nav button.active{background:var(--surface); color:var(--accent-strong); box-shadow:var(--shadow-sm);}
+.admin-main{flex:1; padding:24px 26px; overflow-y:auto; max-height:85vh;}
+.admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; gap:12px; flex-wrap:wrap;}
+.admin-header h2{font-size:19px;}
+.stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:20px;}
+.stat-tile{background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 16px;}
+.stat-tile b{display:block; font-size:24px; font-weight:900; color:var(--navy); font-variant-numeric:tabular-nums;}
+:root[data-theme="dark"] .stat-tile b{color:var(--accent-strong);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stat-tile b{color:var(--accent-strong);}}
+.stat-tile span{font-size:11.5px; color:var(--text-muted);}
+table{width:100%; border-collapse:collapse; font-size:13px;}
+th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-muted); padding:8px 10px; border-bottom:1.5px solid var(--border);}
+td{padding:10px; border-bottom:1px solid var(--border); vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.table-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius-md);}
+.table-wrap table{min-width:560px;}
+.swatch{width:16px; height:16px; border-radius:50%; display:inline-block; vertical-align:-3px; margin-right:6px; border:1px solid rgba(0,0,0,.15);}
+.barlist{display:flex; flex-direction:column; gap:10px;}
+.barlist__row{display:grid; grid-template-columns:140px 1fr 40px; gap:10px; align-items:center; font-size:12.5px;}
+.barlist__track{height:10px; background:var(--surface-2); border-radius:6px; overflow:hidden;}
+.barlist__fill{height:100%; background:var(--turquoise); border-radius:6px;}
+.barlist__val{text-align:right; font-variant-numeric:tabular-nums; color:var(--text-secondary);}
+.qr-card{border:1px solid var(--border); border-radius:var(--radius-md); padding:14px; text-align:center; background:#ffffff;}
+.qr-card canvas, .qr-card img{margin:0 auto;}
+.qr-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px;}
+.badge-req{font-size:10px; font-weight:700; padding:2px 7px; border-radius:99px;}
+.badge-req.req{background:color-mix(in srgb, var(--navy) 14%, transparent); color:var(--navy);}
+:root[data-theme="dark"] .badge-req.req{color:var(--accent-strong);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge-req.req{color:var(--accent-strong);}}
+.badge-req.opt{background:var(--surface-2); color:var(--text-muted); border:1px solid var(--border);}
+.badge-inactive{font-size:10px; color:var(--danger); font-weight:700;}
+.modal-backdrop{position:fixed; inset:0; background:rgba(4,20,32,.55); z-index:60; display:flex; align-items:center; justify-content:center;
+  padding:max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));}
+.modal{background:var(--surface); border-radius:18px; padding:22px; width:100%; max-width:420px; max-height:88vh; max-height:88svh; overflow-y:auto;}
+.modal h3{font-size:16px; margin-bottom:14px;}
+.modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:6px;}
+.iconlink{background:none; border:none; cursor:pointer; color:var(--text-muted); padding:4px;}
+.iconlink:hover{color:var(--accent-strong);}
+.login-pane{max-width:340px; margin:60px auto; text-align:center;}
+
+@media print{
+  body *{visibility:hidden;}
+  #print-area, #print-area *{visibility:visible;}
+  #print-area{position:absolute; top:0; left:0; width:100%;}
+  .no-print{display:none!important;}
+  .qr-sign{page-break-after:always; border:none!important; box-shadow:none!important;}
+  .qr-grid{display:block!important;}
+}
+.qr-sign{page-break-inside:avoid;}
+@media (max-width:760px){
+  .admin-layout{flex-direction:column;}
+  .admin-nav{width:100%; flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--border);}
+  .admin-main{max-height:none;}
+}
+
+/* ============================= RESPONSIVE / MOBILE ============================= */
+/* On phones (narrow width) and short landscape viewports, let the card and its
+   content screens size to their own content instead of a fixed 80vh floor — that
+   fixed floor is what stretched the entrance/cover/login screens far beyond their
+   content and left a large empty gap above the buttons. The interactive passport
+   flip-book (.passport-body) keeps its own modest, content-independent minimum
+   above so it never collapses (its pages are absolutely positioned for the page
+   flip animation, so a min-height there is a rendering necessity, not a design
+   choice). Admin/Staff screens fall back to natural content height too. */
+@media (max-width:560px), (max-height:480px){
+  .phone-shell{min-height:auto;}
+  .admin-shell{min-height:auto;}
+  .screen{min-height:auto;}
+  .admin-layout{min-height:auto;}
+}
+</style>
+
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
+<script>
+/* ===================================================================
+   ADPHC COMMUNITY HEALTH EXPERIENCE PASSPORT — prototype application
+   Data layer: browser-local store (see STORE below) structured so the
+   same call shape (get/set participant, collect stamp, list config)
+   can be swapped for a real API (Dataverse / SharePoint / Power
+   Automate) later without touching the screens.
+=================================================================== */
+
+/* ---------------------------------------------------------------------------
+   ACCESS CODES — stored as SHA-256 digests, not plain text.
+   This file is safe to publish on a public web host: reading the page source no
+   longer reveals the admin or staff code.
+   NOTE: this is obfuscation, not security. The check still runs on the visitor's
+   own device, so a short code could be brute-forced offline. Real staff
+   authentication must be server-side before live-event use.
+   To change a code, generate a new digest and paste it here:
+       ADPHCcrypto.sha256Hex('YOUR-NEW-CODE')
+--------------------------------------------------------------------------- */
+const ADMIN_PASSCODE_HASH = '7da99bf830ce69b06d3db0a767977f7b63e098b9468fbf8ea2fef53dd455e18f';
+const STAFF_PASSCODE_HASH = '5c24b42540d3dc15a54a7fcd54eeb516a367f06a1c8dd7496b27bb647d6d113a';
+/* ------------------------------ SHA-256 -------------------------------- */
+/* Small self-contained SHA-256, used only to compare an entered access code
+   against a stored digest. Works without crypto.subtle. */
+const ADPHCcrypto = (function(){
+  const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+  0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+  0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+  0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+  0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+  0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+  0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+  0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  function rr(x,n){ return (x>>>n)|(x<<(32-n)); }
+  function sha256Hex(str){
+    const bytes=[];
+    for(let i=0;i<str.length;i++){
+      let c=str.charCodeAt(i);
+      if(c<0x80) bytes.push(c);
+      else if(c<0x800){ bytes.push(0xc0|c>>6,0x80|c&63); }
+      else { bytes.push(0xe0|c>>12,0x80|(c>>6&63),0x80|c&63); }
+    }
+    const bitLen=bytes.length*8;
+    bytes.push(0x80);
+    while(bytes.length%64!==56) bytes.push(0);
+    for(let i=7;i>=0;i--) bytes.push((bitLen/Math.pow(2,i*8))&255);
+    let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    const w=new Array(64);
+    for(let i=0;i<bytes.length;i+=64){
+      for(let j=0;j<16;j++) w[j]=(bytes[i+j*4]<<24)|(bytes[i+j*4+1]<<16)|(bytes[i+j*4+2]<<8)|bytes[i+j*4+3];
+      for(let j=16;j<64;j++){
+        const s0=rr(w[j-15],7)^rr(w[j-15],18)^(w[j-15]>>>3);
+        const s1=rr(w[j-2],17)^rr(w[j-2],19)^(w[j-2]>>>10);
+        w[j]=(w[j-16]+s0+w[j-7]+s1)|0;
+      }
+      let [a,b,c,d,e,f,g,h]=H;
+      for(let j=0;j<64;j++){
+        const S1=rr(e,6)^rr(e,11)^rr(e,25), ch=(e&f)^(~e&g);
+        const t1=(h+S1+ch+K[j]+w[j])|0;
+        const S0=rr(a,2)^rr(a,13)^rr(a,22), mj=(a&b)^(a&c)^(b&c);
+        const t2=(S0+mj)|0;
+        h=g; g=f; f=e; e=(d+t1)|0; d=c; c=b; b=a; a=(t1+t2)|0;
+      }
+      H=[(H[0]+a)|0,(H[1]+b)|0,(H[2]+c)|0,(H[3]+d)|0,(H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];
+    }
+    return H.map(x=>((x>>>0).toString(16).padStart(8,'0'))).join('');
+  }
+  function safeEqual(a,b){
+    if(a.length!==b.length) return false;
+    let diff=0;
+    for(let i=0;i<a.length;i++) diff|=a.charCodeAt(i)^b.charCodeAt(i);
+    return diff===0;
+  }
+  return {sha256Hex:sha256Hex, safeEqual:safeEqual};
+})();
+
+const DB_KEY = 'adphc_passport_store_v1';
+const SESSION_KEY = 'adphc_passport_session_v1';
+const ADMIN_SESSION_KEY = 'adphc_passport_admin_v1';
+
+const INK_COLORS = {
+  navy:'#063D68', teal:'#0E7C86', turquoise:'#18B0BB',
+  blue:'#2C6E9E', green:'#4C8C6B', purple:'#6B5B95'
+};
+
+/* -------------------------------- icons -------------------------------- */
+const ICONS = {
+  leaf:'<path d="M12 21C7 21 4 17 4 11C4 11 8 8 12 3C16 8 20 11 20 11C20 17 17 21 12 21Z" fill="currentColor"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>',
+  foot:'<path d="M12 2C9.9 2 9 4 9 6.1C9 7.9 10 9 10 10.9C10 12.6 8 13.4 8 16.3C8 19.5 9.8 22 12 22C14.2 22 16 19.5 16 16.3C16 13.4 14 12.6 14 10.9C14 9 15 7.9 15 6.1C15 4 14.1 2 12 2Z" fill="currentColor"/>',
+  droplet:'<path d="M12 2C8 7.5 5 11.5 5 15.5C5 19.6 8.1 22 12 22C15.9 22 19 19.6 19 15.5C19 11.5 16 7.5 12 2Z" fill="currentColor"/>',
+  lungs:'<path d="M11,10C9,9 6,9.5 4.8,12.5C3.8,15 4,18 6,19.8C7,20.6 8.5,20.4 9.3,19C10,17.8 10.2,14 10.4,11.5Z" fill="currentColor"/><path d="M13,10C15,9 18,9.5 19.2,12.5C20.2,15 20,18 18,19.8C17,20.6 15.5,20.4 14.7,19C14,17.8 13.8,14 13.6,11.5Z" fill="currentColor"/><path d="M12 3V8.2M12 8.2L10.3 11M12 8.2L13.7 11" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  ribbon:'<path d="M12 2c-1.2 1.8-0.5 3.7 0.7 4.9C10.3 8.2 7.8 10.7 7.8 13.7a3.15 3.15 0 0 0 6.3 0.25c0-1.05-0.5-1.85-0.9-2.55c-0.4 0.7-0.9 1.5-0.9 2.55a3.15 3.15 0 0 0 6.3-0.25c0-3-2.5-5.5-5.1-6.8c1.2-1.2 1.9-3.1 0.6-4.9Z" fill="currentColor"/>',
+  star:'<path d="M12 2l2.6 6.6L22 9.2l-5.2 4.6L18.4 21L12 17.1L5.6 21l1.6-7.2L2 9.2l7.4-0.6Z" fill="currentColor"/>',
+  petal:'<path d="M12 2C16.5 6 16.5 12 12 12C7.5 12 7.5 6 12 2Z" fill="currentColor"/>',
+  gift:'<path d="M20 8H4v4h16V8Z" fill="currentColor"/><path d="M5 12h14v9H5v-9Z" fill="currentColor" opacity=".65"/><path d="M12 8v13" stroke="#fff" stroke-width="1.4"/><path d="M12 8c-1-3-5-4-5-1.3C7 8 9.5 8 12 8Z" fill="currentColor"/><path d="M12 8c1-3 5-4 5-1.3C17 8 14.5 8 12 8Z" fill="currentColor"/>',
+  qr:'<path d="M4 4h6v6H4V4Zm2 2v2h2V6H6Zm8-2h6v6h-6V4Zm2 2v2h2V6h-2ZM4 14h6v6H4v-6Zm2 2v2h2v-2H6Zm9-2h2v2h-2v-2Zm3 0h2v2h-2v-2Zm-3 3h2v3h-2v-3Zm3 0h2v1h-2v-1Zm0 2h2v1h-2v-1Z" fill="currentColor"/>',
+  check:'<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  chevronLeft:'<path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  chevronRight:'<path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  close:'<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/>',
+  wand:'<path d="M4 20l9-9M15 4l1.5 1.5M19 8l1.5 1.5M11 4l.7 2.1L14 7l-2.3.9L11 10l-.7-2.1L8 7l2.3-.9L11 4Z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  lock:'<path d="M7 10V7a5 5 0 0110 0v3" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/><rect x="5" y="10" width="14" height="10" rx="2.5" fill="currentColor"/>',
+  dumbbell:'<circle cx="5" cy="12" r="3" fill="currentColor"/><circle cx="19" cy="12" r="3" fill="currentColor"/><rect x="8" y="10.5" width="8" height="3" rx="1" fill="currentColor"/>',
+  palette:'<path d="M12 3C6.5 3 2 6.9 2 11.5C2 14 4 15.5 6 15.5c1 0 1.2-.7.6-1.4-.5-.6-.2-1.6.9-1.6H15c3.9 0 7-2.6 7-6C22 5 17.8 3 12 3Z" fill="currentColor"/><circle cx="7" cy="10" r="1.1" fill="#fff"/><circle cx="10.5" cy="7.3" r="1.1" fill="#fff"/><circle cx="15" cy="7.3" r="1.1" fill="#fff"/><circle cx="18" cy="10.3" r="1.1" fill="#fff"/>',
+  chef:'<path d="M8 10c0-2.2 1.8-4 4-4s4 1.8 4 4c1.7.3 3 1.8 3 3.6 0 1.6-1 2.9-2.4 3.4V19H7.4v-2C6 16.5 5 15.2 5 13.6 5 11.8 6.3 10.3 8 10Z" fill="currentColor"/>',
+  puzzle:'<path d="M5 9h3.2c.4-1.2 1.5-2 2.8-2s2.4.8 2.8 2H17c1.1 0 2 .9 2 2v3.2c1.2.4 2 1.5 2 2.8s-.8 2.4-2 2.8V19H15.8c-.4-1.2-1.5-2-2.8-2s-2.4.8-2.8 2H7c-1.1 0-2-.9-2-2v-3.2c-1.2-.4-2-1.5-2-2.8s.8-2.4 2-2.8V9Z" fill="currentColor"/>',
+  stretch:'<circle cx="12" cy="4.5" r="2" fill="currentColor"/><path d="M12 6.5v6M8 9l4-2 4 2M8 20l4-7 4 7" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  shield:'<path d="M12 2l7 3v6c0 5-3.4 8.7-7 10-3.6-1.3-7-5-7-10V5l7-3Z" fill="currentColor"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+  pulse:'<path d="M3 12h4l2-6 4 12 2-6h6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  community:'<g transform="translate(-1.8,-4.27) scale(1.15)"><circle cx="4.6" cy="12.3" r="1.55" fill="currentColor"/><path d="M2.1 19.4c0-2.7 1.2-4.1 2.5-4.1s2.5 1.4 2.5 4.1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="19.4" cy="12.3" r="1.55" fill="currentColor"/><path d="M16.9 19.4c0-2.7 1.2-4.1 2.5-4.1s2.5 1.4 2.5 4.1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="10.6" r="1.9" fill="currentColor"/><path d="M8.8 19.6c0-3.3 1.5-5 3.2-5s3.2 1.7 3.2 5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></g>',
+  plate:'<circle cx="10" cy="13" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 6V20M10 13H17" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M18.4 5v4.2M20 5v4.2M21.6 5v4.2" stroke="currentColor" stroke-width="1.15" fill="none" stroke-linecap="round"/><path d="M20 9.2V21" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/><g transform="translate(3.5,3.5) rotate(-35)"><path d="M0,-3.2 Q2.2,0 0,3.2 Q-2.2,0 0,-3.2 Z" fill="currentColor"/></g>'
+};
+function svgIcon(name,size,cls){ size=size||24; return '<svg class="'+(cls||'')+'" viewBox="0 0 24 24" width="'+size+'" height="'+size+'">'+(ICONS[name]||ICONS.star)+'</svg>'; }
+function nestedIcon(name,cx,cy,size){ size=size||24; return '<svg x="'+(cx-size/2)+'" y="'+(cy-size/2)+'" width="'+size+'" height="'+size+'" viewBox="0 0 24 24">'+(ICONS[name]||ICONS.star)+'</svg>'; }
+
+/* Official ADPHC logo asset — used exactly as supplied, never redrawn or recoloured. */
+function logoImgTag(maxWidth){
+  const w=maxWidth||150;
+  return '<img src="adphc-logo.jpg" alt="Abu Dhabi Public Health Centre" style="display:block; width:'+w+'px; max-width:100%; height:auto;">';
+}
+function logoBadge(maxWidth, pad){
+  return '<div class="logo-badge" style="padding:'+(pad||'10px 14px')+';">'+logoImgTag(maxWidth)+'</div>';
+}
+
+/* ------------------------------ utilities ------------------------------ */
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function hashStr(s){ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function randCode(len){ const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<len;i++) s+=chars[Math.floor(Math.random()*chars.length)]; return s; }
+function genPassportId(){ return 'ADPHC-'+randCode(6); }
+function genRedemptionCode(){ return 'GIFT-'+randCode(6); }
+function formatDate(iso){ if(!iso) return ''; const d=new Date(iso); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase(); }
+function formatDateTime(iso){ if(!iso) return ''; const d=new Date(iso); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+', '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('show');},2200); }
+function baseUrl(){ return location.origin+location.pathname; }
+function prefersReducedMotion(){ return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+/* --------------------------------- store -------------------------------- */
+const SCHEMA_VERSION = 5;
+function slugify(s){ const v=(s||'').toUpperCase().replace(/[^A-Z0-9]+/g,'-').replace(/(^-+|-+$)/g,'').slice(0,26); return v||'ACTIVITY'; }
+function defaultGiveaway(){
+  return { eyebrow:'GIFT UNLOCKED', heading:'Congratulations!', subheading:'You’ve collected 3 stamps and unlocked your gift!',
+    instructions:'Continue exploring and collecting stamps, or collect your gift when you’re ready.',
+    collectionPoint:'To be confirmed', enabled:true, secondCelebrationGiftEnabled:false,
+    completionHeading:'Passport Complete!', completionSubheading:'You explored all Community Health experiences!' };
+}
+function defaultState(){
+  return {
+    departments:[
+      {id:'sect-ncd-prevention', name:'NCDs Prevention and Control', icon:'pulse', order:1, active:true},
+      {id:'sect-ncd-screening', name:'NCDs Surveillance and Screenings', icon:'search', order:2, active:true},
+      {id:'sect-behavior', name:'Health Behavior Promotion', icon:'community', order:3, active:true},
+      {id:'sect-occupational', name:'Occupational Safety and Health', icon:'shield', order:4, active:true}
+    ],
+    activities:[
+      {id:'DIABETES-EDUCATION', title:'Diabetes Prevention Interactive Game', deptId:'sect-ncd-prevention', description:'An interactive walk-through of the prediabetes prevention pathway — meal order, glucose response and post-meal activity.', icon:'droplet', stampColor:'navy', countsTowardReward:true, hasStamp:true, active:true, order:1},
+      {id:'MUSCLE-STRENGTH', title:'Muscle Strength Testing', deptId:'sect-ncd-screening', description:'A simple grip- and core-strength check for workplace wellbeing.', icon:'dumbbell', stampColor:'purple', countsTowardReward:true, hasStamp:true, active:true, order:3},
+      {id:'SPIROMETRY', title:'Spirometry Testing', deptId:'sect-ncd-prevention', description:'A quick lung-function check with instant results.', icon:'lungs', stampColor:'blue', countsTowardReward:true, hasStamp:true, active:true, order:2},
+      {id:'NUTRITION-GAME', title:'Nutrition Interactive Game', deptId:'sect-behavior', description:'A hands-on game about building a balanced plate.', icon:'plate', stampColor:'turquoise', countsTowardReward:true, hasStamp:true, active:true, order:4},
+      {id:'PHYSIO', title:'Physio + Ergonomics Booth', deptId:'sect-occupational', description:'A short posture, movement and workstation ergonomics check with a physiotherapist.', icon:'stretch', stampColor:'teal', countsTowardReward:true, hasStamp:true, active:true, order:5}
+    ],
+    participants:{}, stamps:{}, rewards:{},
+    meta:{ schemaVersion:SCHEMA_VERSION, minStampsRequired:3, createdAt:new Date().toISOString(), giveaway:defaultGiveaway() }
+  };
+}
+const STORE = {
+  get(){
+    try{
+      const raw = localStorage.getItem(DB_KEY);
+      if(!raw){ const s=defaultState(); localStorage.setItem(DB_KEY, JSON.stringify(s)); return s; }
+      const parsed=JSON.parse(raw);
+      if(!parsed.meta || parsed.meta.schemaVersion!==SCHEMA_VERSION){
+        const fresh=defaultState();
+        localStorage.setItem(DB_KEY, JSON.stringify(fresh));
+        return fresh;
+      }
+      // forward-compatible fill-in for any giveaway/activity fields added after this record was saved
+      parsed.meta.giveaway=Object.assign({}, defaultGiveaway(), parsed.meta.giveaway||{});
+      parsed.activities.forEach(function(a){ if(a.hasStamp===undefined) a.hasStamp=true; });
+      return parsed;
+    }catch(e){ return defaultState(); }
+  },
+  save(state){ try{ localStorage.setItem(DB_KEY, JSON.stringify(state)); }catch(e){} },
+  getSession(){ try{ return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); }catch(e){ return null; } },
+  setSession(s){ localStorage.setItem(SESSION_KEY, JSON.stringify(s)); },
+  clearSession(){ localStorage.removeItem(SESSION_KEY); },
+  isAdmin(){ return sessionStorage.getItem(ADMIN_SESSION_KEY)==='admin'; },
+  isStaff(){ const v=sessionStorage.getItem(ADMIN_SESSION_KEY); return v==='admin'||v==='staff'; },
+  setRole(r){ sessionStorage.setItem(ADMIN_SESSION_KEY, r); },
+
+  activeDepartments(){ return this.get().departments.filter(d=>d.active).sort((a,b)=>a.order-b.order); },
+  activeActivitiesFor(deptId){ return this.get().activities.filter(a=>a.deptId===deptId && a.active && a.hasStamp!==false).sort((a,b)=>a.order-b.order); },
+  poolActivities(){ return this.get().activities.filter(a=>a.active && a.countsTowardReward); },
+  bonusActivities(){ return this.get().activities.filter(a=>a.active && !a.countsTowardReward); },
+  getThreshold(){ const state=this.get(); const pool=state.activities.filter(a=>a.active && a.countsTowardReward).length; return Math.max(1, Math.min(state.meta.minStampsRequired||1, pool||1)); },
+
+  registerParticipant(name, contact){
+    const state=this.get();
+    const passportId=genPassportId();
+    const participant={ participantId:passportId, passportId, name:name.trim(), contact:(contact||'').trim(),
+      registrationDateTime:new Date().toISOString(), stampsCollected:0, completionPercentage:0,
+      passportCompleted:false, allActivitiesCompleted:false, giftEligible:false, giftCollected:false, giftCollectionDateTime:null };
+    state.participants[passportId]=participant;
+    this.save(state);
+    this.setSession({passportId:passportId});
+    return participant;
+  },
+  getParticipant(passportId){ return this.get().participants[passportId]||null; },
+  findByPassportId(id){ return this.get().participants[(id||'').trim().toUpperCase()]||null; },
+
+  hasStamp(passportId, activityId){ const s=this.get(); return !!s.stamps[passportId+'__'+activityId]; },
+  collectStamp(passportId, activityId){
+    const state=this.get();
+    const activity=state.activities.find(a=>a.id===activityId);
+    if(!activity || !activity.active) return {status:'invalid'};
+    const key=passportId+'__'+activityId;
+    if(state.stamps[key]) return {status:'already', record:state.stamps[key]};
+    const record={ stampRecordId:key, participantId:passportId, activityId:activityId, dateTimeCollected:new Date().toISOString(), valid:true };
+    state.stamps[key]=record;
+    const p=state.participants[passportId];
+    const pool=state.activities.filter(a=>a.active && a.countsTowardReward);
+    const collectedPool=pool.filter(a=>state.stamps[passportId+'__'+a.id]);
+    const threshold=Math.max(1, Math.min(state.meta.minStampsRequired||1, pool.length||1));
+    const giveawayEnabled = !state.meta.giveaway || state.meta.giveaway.enabled!==false;
+    if(p){
+      p.stampsCollected=Object.keys(state.stamps).filter(k=>k.startsWith(passportId+'__')).length;
+      p.completionPercentage=threshold? Math.min(100, Math.round((collectedPool.length/threshold)*100)):0;
+    }
+    let newlyRewardUnlocked=false;
+    if(giveawayEnabled && pool.length>0 && collectedPool.length>=threshold && !state.rewards[passportId]){
+      state.rewards[passportId]={ passportId:passportId, passportCompletionStatus:true, rewardUnlocked:true,
+        redemptionCode:genRedemptionCode(), giftCollected:false, giftCollectionTime:null, unlockedAt:new Date().toISOString() };
+      if(p){ p.passportCompleted=true; p.giftEligible=true; }
+      newlyRewardUnlocked=true;
+    }
+    let newlyFullyComplete=false;
+    if(pool.length>0 && collectedPool.length>=pool.length && p && !p.allActivitiesCompleted){
+      p.allActivitiesCompleted=true;
+      newlyFullyComplete=true;
+      if(giveawayEnabled && state.meta.giveaway && state.meta.giveaway.secondCelebrationGiftEnabled && state.rewards[passportId]){
+        state.rewards[passportId].bonusGiftEarned=true;
+      }
+    }
+    this.save(state);
+    return {status:'collected', record:record, newlyRewardUnlocked:newlyRewardUnlocked, newlyFullyComplete:newlyFullyComplete};
+  },
+  getProgress(passportId){
+    const state=this.get();
+    const pool=state.activities.filter(a=>a.active && a.countsTowardReward);
+    const bonus=state.activities.filter(a=>a.active && !a.countsTowardReward);
+    const collectedPool=pool.filter(a=>state.stamps[passportId+'__'+a.id]).length;
+    const collectedBonus=bonus.filter(a=>state.stamps[passportId+'__'+a.id]).length;
+    const threshold=Math.max(1, Math.min(state.meta.minStampsRequired||1, pool.length||1));
+    return { poolTotal:pool.length, threshold:threshold, collectedPool:collectedPool, bonusTotal:bonus.length, collectedBonus:collectedBonus,
+      total:pool.length+bonus.length, collectedTotal:collectedPool+collectedBonus,
+      complete: pool.length>0 && collectedPool>=threshold,
+      allDone: pool.length>0 && collectedPool>=pool.length };
+  },
+  getReward(passportId){ return this.get().rewards[passportId]||null; },
+  redeemByCode(code){
+    const state=this.get();
+    const pid=Object.keys(state.rewards).find(k=>state.rewards[k].redemptionCode===(code||'').trim().toUpperCase());
+    return pid? {passportId:pid, reward:state.rewards[pid], participant:state.participants[pid]} : null;
+  },
+  markGiftCollected(passportId){
+    const state=this.get();
+    const r=state.rewards[passportId]; if(!r) return false;
+    if(r.giftCollected) return 'already';
+    r.giftCollected=true; r.giftCollectionTime=new Date().toISOString();
+    if(state.participants[passportId]){ state.participants[passportId].giftCollected=true; state.participants[passportId].giftCollectionDateTime=r.giftCollectionTime; }
+    this.save(state);
+    return true;
+  },
+
+  addDepartment(d){ const state=this.get(); const id='dept-'+randCode(5).toLowerCase(); state.departments.push({id:id,name:d.name,icon:d.icon,order:state.departments.length+1,active:true}); this.save(state); },
+  updateDepartment(id, patch){ const state=this.get(); const d=state.departments.find(x=>x.id===id); if(d) Object.assign(d,patch); this.save(state); },
+  deleteDepartment(id){ const state=this.get(); state.departments=state.departments.filter(x=>x.id!==id); state.activities=state.activities.filter(a=>a.deptId!==id); this.save(state); },
+
+  addActivity(a){ const state=this.get(); const base=slugify(a.title); let id=base, n=2;
+    while(state.activities.some(x=>x.id===id)){ id=base+'-'+n; n++; }
+    state.activities.push({id:id,title:a.title,deptId:a.deptId,description:a.description||'',icon:a.icon||'star',stampColor:a.stampColor||'navy',countsTowardReward:a.countsTowardReward!==false,hasStamp:a.hasStamp!==false,active:true,order:state.activities.length+1});
+    this.save(state); return id; },
+  updateActivity(id, patch){ const state=this.get(); const a=state.activities.find(x=>x.id===id); if(a) Object.assign(a,patch); this.save(state); },
+  deleteActivity(id){ const state=this.get(); state.activities=state.activities.filter(x=>x.id!==id); this.save(state); },
+
+  resetAll(){ localStorage.removeItem(DB_KEY); localStorage.removeItem(SESSION_KEY); this.get(); }
+};
+
+/* ---------------------------- ink stamp render --------------------------- */
+function buildBlobPath(cx,cy,rBase,jitter,points,rng){
+  const pts=[];
+  for(let i=0;i<points;i++){ const ang=(i/points)*Math.PI*2; const r=rBase+(rng()*2-1)*jitter; pts.push([cx+Math.cos(ang)*r, cy+Math.sin(ang)*r]); }
+  let d='M '+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1)+' ';
+  for(let i=0;i<points;i++){ const p0=pts[i], p1=pts[(i+1)%points]; const mx=(p0[0]+p1[0])/2, my=(p0[1]+p1[1])/2; d+='Q '+p0[0].toFixed(1)+' '+p0[1].toFixed(1)+' '+mx.toFixed(1)+' '+my.toFixed(1)+' '; }
+  return d+'Z';
+}
+function buildStampSVG(activity, dept, collectedAt){
+  const seed=hashStr(activity.id);
+  const rng=mulberry32(seed);
+  const rot=(rng()*30-15).toFixed(1);
+  const uid=activity.id.replace(/[^A-Za-z0-9]/g,'');
+  const outerD=buildBlobPath(80,80,66,5,11,rng);
+  const innerD=buildBlobPath(80,80,50,4,11,rng);
+  const filterSeed=Math.floor(rng()*900)+1;
+  const color=INK_COLORS[activity.stampColor]||INK_COLORS.navy;
+  const dateStr=collectedAt? 'COLLECTED '+formatDate(collectedAt) : '';
+  return '<svg viewBox="0 0 160 160" class="ink-stamp" role="img" aria-label="'+escapeHtml(activity.title)+' stamp collected">'+
+    '<defs>'+
+      '<filter id="grain-'+uid+'" x="-30%" y="-30%" width="160%" height="160%">'+
+        '<feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="'+filterSeed+'" result="n"/>'+
+        '<feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>'+
+      '</filter>'+
+      '<filter id="patch-'+uid+'" x="-30%" y="-30%" width="160%" height="160%">'+
+        '<feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" seed="'+(filterSeed+11)+'" result="n2"/>'+
+        '<feColorMatrix in="n2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.1 1.1 1.1 0 -0.28" result="m"/>'+
+        '<feComposite in="SourceGraphic" in2="m" operator="in"/>'+
+      '</filter>'+
+    '</defs>'+
+    '<mask id="mask-'+uid+'"><rect width="160" height="160" fill="white" filter="url(#patch-'+uid+')"/></mask>'+
+    '<g transform="rotate('+rot+' 80 80)" mask="url(#mask-'+uid+')">'+
+      '<g filter="url(#grain-'+uid+')" fill="none" stroke="'+color+'">'+
+        '<path d="'+outerD+'" stroke-width="4.5" opacity="0.85"/>'+
+        '<path d="'+innerD+'" stroke-width="2" opacity="0.8"/>'+
+      '</g>'+
+      '<path id="arc-'+uid+'" d="M 32 82 A 48 48 0 0 1 128 82" fill="none"/>'+
+      '<text font-family="Source Sans 3, sans-serif" font-weight="700" font-size="10.5" letter-spacing="2" fill="'+color+'" filter="url(#grain-'+uid+')">'+
+        '<textPath href="#arc-'+uid+'" startOffset="50%" text-anchor="middle">'+escapeHtml(dept.name.toUpperCase())+'</textPath>'+
+      '</text>'+
+      '<g style="color:'+color+'" filter="url(#grain-'+uid+')">'+nestedIcon(activity.icon,80,64,26)+'</g>'+
+      '<text x="80" y="106" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-weight="800" font-size="10" letter-spacing="0.6" fill="'+color+'" filter="url(#grain-'+uid+')">'+escapeHtml(activity.title.toUpperCase())+'</text>'+
+      (dateStr? '<text x="80" y="120" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" letter-spacing="1.2" fill="'+color+'" opacity="0.85">'+dateStr+'</text>' : '')+
+    '</g>'+
+  '</svg>';
+}
+function petalField(count){
+  let out='';
+  for(let i=0;i<count;i++){
+    const x=(i*37)%100, y=(i*53)%100, r=(i*17)%180;
+    out+='<svg style="left:'+x+'%; top:'+y+'%; width:60px; height:60px; transform:rotate('+r+'deg);" viewBox="0 0 24 24" fill="var(--navy)">'+ICONS.petal+'</svg>';
+  }
+  return out;
+}
+
+/* ------------------------------ QR helper -------------------------------- */
+function renderQRInto(elId, text, size, dark, level){
+  const el=document.getElementById(elId);
+  if(!el || typeof QRCode==='undefined') return;
+  el.innerHTML='';
+  new QRCode(el, { text:text, width:size||140, height:size||140, colorDark:dark||'#063D68', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel[level||'M'] });
+}
+async function downloadActivityQR(activityId){
+  const container=document.getElementById('qrStaff-'+activityId) || document.getElementById('qr-'+activityId);
+  const canvas=container? container.querySelector('canvas') : null;
+  if(!canvas){ toast('QR image is not ready yet.'); return; }
+  canvas.toBlob(async function(blob){
+    if(!blob){ toast('Could not generate the image.'); return; }
+    await saveFileBlob(blob, 'adphc-qr-'+activityId.toLowerCase()+'.png');
+  }, 'image/png');
+}
+
+/* -------------------------------- downloads ------------------------------ */
+// Uses Claude's downloads capability when running inside a Claude Artifact preview
+// (window.claude present); falls back to a normal browser download everywhere else,
+// including the standalone deployed web app, so this one code path works in both.
+let DOWNLOADS_NS=null;
+if(typeof window!=='undefined' && window.claude && window.claude.use){
+  window.claude.use('downloads').then(function(d){ DOWNLOADS_NS=d; }).catch(function(){ DOWNLOADS_NS=null; });
+}
+function browserDownloadBlob(blob, filename){
+  try{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=filename; a.style.display='none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    return true;
+  }catch(e){ return false; }
+}
+async function saveFileBlob(blob, filename){
+  if(DOWNLOADS_NS){
+    try{ await DOWNLOADS_NS.save({filename:filename, data:blob}); toast('Saved.'); return; }
+    catch(e){ if(e && e.code==='declined') return; /* fall through to browser download */ }
+  }
+  toast(browserDownloadBlob(blob, filename) ? 'Saved.' : 'Could not save the file.');
+}
+async function downloadBackup(){
+  const state=STORE.get();
+  const blob=new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  await saveFileBlob(blob, 'adphc-passport-backup.json');
+}
+function csvCell(v){
+  const s=(v===null||v===undefined)?'':String(v);
+  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
+function csvRow(arr){ return arr.map(csvCell).join(',')+'\r\n'; }
+async function downloadReportCSV(){
+  const state=STORE.get();
+  const participants=Object.values(state.participants).sort((a,b)=>new Date(a.registrationDateTime)-new Date(b.registrationDateTime));
+  const acts=state.activities.slice().sort((a,b)=>a.order-b.order);
+  const totalScans=Object.keys(state.stamps).length;
+  const giftEligible=participants.filter(p=>p.passportCompleted).length;
+  const allDone=participants.filter(p=>p.allActivitiesCompleted).length;
+  const giftsCollected=Object.values(state.rewards).filter(r=>r.giftCollected).length;
+
+  let csv='';
+  csv+=csvRow(['ADPHC Community Health Experience Passport — Report']);
+  csv+=csvRow(['Generated', new Date().toISOString()]);
+  csv+='\r\n';
+  csv+=csvRow(['Summary']);
+  csv+=csvRow(['Metric','Value']);
+  csv+=csvRow(['Total registered participants', participants.length]);
+  csv+=csvRow(['Total stamps collected', totalScans]);
+  csv+=csvRow(['Reached gift eligibility', giftEligible]);
+  csv+=csvRow(['Gifts redeemed', giftsCollected]);
+  csv+=csvRow(['Completed all activities', allDone]);
+  csv+=csvRow(['Gift eligibility rate', participants.length? Math.round(giftEligible/participants.length*100)+'%' : '0%']);
+  csv+='\r\n';
+
+  csv+=csvRow(['Completion by activity']);
+  csv+=csvRow(['Activity','Section','Stamps Collected']);
+  acts.forEach(function(a){
+    const dept=state.departments.find(d=>d.id===a.deptId);
+    const count=Object.keys(state.stamps).filter(k=>k.endsWith('__'+a.id)).length;
+    csv+=csvRow([a.title, dept?dept.name:'—', count]);
+  });
+  csv+='\r\n';
+
+  csv+=csvRow(['Participants']);
+  csv+=csvRow(['Passport ID','Name','Registered At','Stamps Collected','Gift Eligible','Gift Collected','Gift Collection Time'].concat(acts.map(a=>a.title)));
+  participants.forEach(function(p){
+    const reward=state.rewards[p.passportId];
+    const row=[p.passportId, p.name, formatDateTime(p.registrationDateTime), p.stampsCollected||0,
+      p.giftEligible?'Yes':'No', p.giftCollected?'Yes':'No', p.giftCollectionDateTime? formatDateTime(p.giftCollectionDateTime):''];
+    acts.forEach(function(a){ row.push(state.stamps[p.passportId+'__'+a.id] ? 'Yes':'No'); });
+    csv+=csvRow(row);
+  });
+
+  const blob=new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  await saveFileBlob(blob, 'adphc-passport-report.csv');
+}
+function downloadNamedQR(containerId, filename){
+  const container=document.getElementById(containerId);
+  const canvas=container? container.querySelector('canvas') : null;
+  if(!canvas){ toast('QR image is not ready yet.'); return; }
+  canvas.toBlob(async function(blob){
+    if(!blob){ toast('Could not generate the image.'); return; }
+    await saveFileBlob(blob, filename);
+  }, 'image/png');
+}
+
+/* ==================================== ROUTER ==================================== */
+const ACT_PREFIX='#/activity/';
+const DEPT_PREFIX='#/dept/';
+let pendingActivity=null;
+let currentPageIndex=0;
+
+function navigate(hash){ if(location.hash===hash){ render(); } else { location.hash=hash; } }
+window.addEventListener('hashchange', render);
+window.addEventListener('storage', function(e){ if(e.key===DB_KEY) render(); });
+
+function phoneShell(inner, opts){
+  opts=opts||{};
+  return '<div class="phone-shell">'+inner+'</div>'+(opts.demo? demoFabHTML():'');
+}
+
+function render(){
+  const hash=location.hash||'#/';
+  const root=document.getElementById('app');
+  if(hash.indexOf(ACT_PREFIX)===0){
+    const code=decodeURIComponent(hash.slice(ACT_PREFIX.length));
+    const session=STORE.getSession();
+    if(!session || !STORE.getParticipant(session.passportId)){
+      root.innerHTML=phoneShell(entranceWrap(noSessionActivityHTML(code)));
+      return;
+    }
+    const activity=STORE.get().activities.find(a=>a.id===code);
+    if(activity){
+      const depts=STORE.activeDepartments().filter(d=>STORE.activeActivitiesFor(d.id).length>0);
+      const idx=depts.findIndex(d=>d.id===activity.deptId);
+      if(idx>=0) currentPageIndex=idx;
+    }
+    renderPassportScreen(true);
+    setTimeout(function(){ handleActivityRoute(code); }, 30);
+    return;
+  }
+  if(hash.indexOf(DEPT_PREFIX)===0){
+    const deptId=decodeURIComponent(hash.slice(DEPT_PREFIX.length));
+    const depts=STORE.activeDepartments().filter(d=>STORE.activeActivitiesFor(d.id).length>0);
+    const idx=depts.findIndex(d=>d.id===deptId);
+    if(idx<0){ toast('No active stations in this section yet.'); navigate('#/explore'); return; }
+    currentPageIndex=idx;
+    renderPassportScreen(false);
+    return;
+  }
+  if(hash==='#/register'){ root.innerHTML=phoneShell(entranceWrap(registerScreenHTML())); mountRegisterForm(); return; }
+  if(hash==='#/cover'){ renderCoverScreen(); return; }
+  if(hash==='#/explore'){ renderExploreScreen(); return; }
+  if(hash==='#/passport'){ renderPassportScreen(false); return; }
+  if(hash==='#/reward'){ renderRewardScreen(); return; }
+  if(hash==='#/admin'){ renderAdminRoot(); return; }
+  if(hash==='#/redeem'){ renderRedeemScreen(); return; }
+  if(hash==='#/qr'){ renderStaffQRScreen(); return; }
+  const session=STORE.getSession();
+  if(session && STORE.getParticipant(session.passportId)){ location.hash='#/explore'; return; }
+  root.innerHTML=phoneShell(entranceWrap(entranceHTML()));
+  mountEntrance();
+}
+function entranceWrap(inner){ return '<div class="screen">'+inner+'</div>'; }
+
+/* ------------------------------- entrance -------------------------------- */
+function entranceHTML(){
+  return '<div class="entrance">'+
+    '<div>'+
+      '<div style="display:flex; justify-content:center;">'+logoBadge(180)+'</div>'+
+      '<h1>Community Health<br>Experience Passport</h1>'+
+      '<p>Explore the showcase, collect a live stamp at each activity, and unlock your gift once you reach the minimum — keep going for fun after that.</p>'+
+    '</div>'+
+    '<div class="entrance__stamp-preview">'+buildStampSVG({id:'preview',title:'Sample Stop',icon:'star',stampColor:'turquoise'},{name:'Showcase'})+'</div>'+
+    '<div style="width:100%;">'+
+      '<button class="btn btn-primary btn-block" onclick="navigate(\'#/register\')">Scan &amp; Register to Begin</button>'+
+      '<div class="entrance__links" style="margin-top:16px;">'+
+        '<button onclick="toggleResumeField()">Resume with Passport ID</button>'+
+        '<button onclick="navigate(\'#/redeem\')">Staff desk</button>'+
+      '</div>'+
+      '<div id="resumeField" class="hidden" style="margin-top:14px; text-align:left;">'+
+        '<div class="field"><input id="resumeInput" placeholder="e.g. ADPHC-7F3K9Q" style="text-transform:uppercase; color:#0A2E44;"></div>'+
+        '<button class="btn btn-light btn-block" onclick="resumePassport()">Resume passport</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+function mountEntrance(){}
+function noSessionActivityHTML(code){
+  return '<div class="screen-pad">'+
+    '<div style="display:flex; justify-content:center; margin-bottom:18px;">'+logoImgTag(150)+'</div>'+
+    '<h2 style="font-size:18px;">Almost there</h2>'+
+    '<p class="muted small" style="margin-bottom:18px;">Sign in to your passport to collect this stamp — register if this is your first activity, or resume if you already started.</p>'+
+    '<button class="btn btn-primary btn-block" onclick="goRegisterPending(\''+code+'\')">Register a new passport</button>'+
+    '<div class="divider"></div>'+
+    '<div class="field"><label>Already registered? Enter your Passport ID</label><input id="resumeInputAct" placeholder="e.g. ADPHC-7F3K9Q" style="text-transform:uppercase;"></div>'+
+    '<button class="btn btn-light btn-block" onclick="resumeForActivity(\''+code+'\')">Resume &amp; collect stamp</button>'+
+  '</div>';
+}
+function goRegisterPending(code){ pendingActivity=code; navigate('#/register'); }
+function resumeForActivity(code){
+  const val=document.getElementById('resumeInputAct').value.trim().toUpperCase();
+  const p=STORE.findByPassportId(val);
+  if(!p){ toast('No passport found with that ID.'); return; }
+  STORE.setSession({passportId:p.passportId});
+  location.hash=ACT_PREFIX+code;
+}
+function toggleResumeField(){ document.getElementById('resumeField').classList.toggle('hidden'); }
+function resumePassport(){
+  const val=document.getElementById('resumeInput').value.trim().toUpperCase();
+  const p=STORE.findByPassportId(val);
+  if(!p){ toast('No passport found with that ID.'); return; }
+  STORE.setSession({passportId:p.passportId});
+  navigate('#/explore');
+}
+
+/* ------------------------------- register --------------------------------- */
+function registerScreenHTML(){
+  return '<div class="screen-pad">'+
+    '<div style="margin-bottom:22px;">'+logoImgTag(160)+'</div>'+
+    '<h2 style="font-size:19px; margin-bottom:4px;">Register to start</h2>'+
+    '<p class="muted small" style="margin-bottom:18px;">Takes a moment — your passport is created instantly and stamped live as you explore.</p>'+
+    '<div class="field"><label>Your name</label><input id="regName" placeholder="Your name" onkeydown="if(event.key===\'Enter\') submitRegistration();"></div>'+
+    '<button class="btn btn-primary btn-block" onclick="submitRegistration()">Create my passport</button>'+
+    '<button class="btn btn-ghost btn-block" onclick="navigate(\'#/\')">Back</button>'+
+  '</div>';
+}
+function mountRegisterForm(){ const el=document.getElementById('regName'); if(el) el.focus(); }
+function submitRegistration(){
+  const name=document.getElementById('regName').value.trim();
+  if(!name){ toast('Please enter your name.'); return; }
+  const p=STORE.registerParticipant(name, '');
+  toast('Passport created — welcome, '+p.name.split(' ')[0]+'!');
+  if(pendingActivity){ const act=pendingActivity; pendingActivity=null; location.hash=ACT_PREFIX+act; }
+  else location.hash='#/explore';
+}
+
+/* --------------------------------- cover ----------------------------------- */
+function renderCoverScreen(){
+  const session=STORE.getSession();
+  if(!session){ location.hash='#/'; return; }
+  const p=STORE.getParticipant(session.passportId);
+  if(!p){ STORE.clearSession(); location.hash='#/'; return; }
+  const prog=STORE.getProgress(p.passportId);
+  let dots='';
+  for(let i=0;i<prog.threshold;i++){ dots+='<i class="'+(i<Math.min(prog.collectedPool,prog.threshold)?'filled':'')+'"></i>'; }
+  const extra=Math.max(0, prog.collectedPool-prog.threshold);
+  const root=document.getElementById('app');
+  root.innerHTML=phoneShell('<div class="cover">'+
+    '<div><div class="cover__top">'+
+      logoBadge(84,'6px 9px')+
+      '<span class="cover__badge">'+(prog.complete?'COMPLETE':'IN PROGRESS')+'</span>'+
+    '</div>'+
+    '<div class="cover__title"><small>ADPHC PUBLIC HEALTH SHOWCASE</small><h1>COMMUNITY HEALTH<br>EXPERIENCE PASSPORT</h1></div>'+
+    '<div class="cover__name">'+escapeHtml(p.name)+'</div>'+
+    '<div class="cover__id mono">'+p.passportId+'</div>'+
+    '<div class="cover__progress"><div class="cover__progress-row"><b>'+Math.min(prog.collectedPool,prog.threshold)+' / '+prog.threshold+' STAMPS COLLECTED</b><span>'+prog.threshold+' of '+prog.poolTotal+' unlock your gift'+(extra? ' · +'+extra+' extra':'')+(prog.bonusTotal? ' · '+prog.collectedBonus+'/'+prog.bonusTotal+' bonus':'')+'</span></div><div class="dot-track">'+dots+'</div></div>'+
+    '</div>'+
+    '<div><button class="btn btn-primary btn-block" onclick="navigate(\'#/passport\')">Open Passport</button>'+
+    (prog.complete? '<button class="btn btn-light btn-block" style="margin-top:10px;" onclick="navigate(\'#/reward\')">View my gift</button>':'')+
+    '<div class="cover__foot"><button onclick="switchPassport()">Not you? Switch passport</button><button onclick="navigate(\'#/redeem\')">Staff desk</button></div>'+
+    '</div>'+
+  '</div>', {demo:true});
+}
+function switchPassport(){ STORE.clearSession(); navigate('#/'); }
+
+/* ------------------------------- explore departments ----------------------------- */
+function renderExploreScreen(){
+  const session=STORE.getSession();
+  if(!session){ location.hash='#/'; return; }
+  const p=STORE.getParticipant(session.passportId);
+  if(!p){ STORE.clearSession(); location.hash='#/'; return; }
+  const prog=STORE.getProgress(p.passportId);
+  const reward=STORE.getReward(p.passportId);
+  const depts=STORE.activeDepartments();
+  let dots='';
+  for(let i=0;i<prog.threshold;i++){ dots+='<i class="'+(i<Math.min(prog.collectedPool,prog.threshold)?'filled':'')+'"></i>'; }
+  let progressLine;
+  if(prog.allDone){ progressLine=prog.collectedPool+' / '+prog.poolTotal+' — Passport Complete ✨'; }
+  else if(prog.complete){ progressLine=prog.collectedPool+' / '+prog.poolTotal+' — Gift Unlocked 🎁 · keep exploring, can you complete your passport?'; }
+  else { progressLine=Math.min(prog.collectedPool,prog.threshold)+' / '+prog.threshold+' stamps toward your gift'; }
+  const cards=depts.map(function(d){
+    const acts=STORE.activeActivitiesFor(d.id);
+    const collected=acts.filter(a=>STORE.hasStamp(p.passportId,a.id)).length;
+    const done=acts.length>0 && collected>=acts.length;
+    return '<div class="dest-card'+(done?' dest-card--done':'')+'" onclick="navigate(\'#/dept/'+d.id+'\')" role="button" tabindex="0">'+
+      '<div class="dest-card__icon">'+svgIcon(d.icon||'star',26)+(done? '<span class="dest-card__check">'+svgIcon('check',12)+'</span>' : '')+'</div>'+
+      '<b>'+escapeHtml(d.name)+'</b>'+
+      '<span>'+(acts.length? collected+' of '+acts.length+' collected' : 'Coming soon')+'</span>'+
+    '</div>';
+  }).join('');
+  const root=document.getElementById('app');
+  root.innerHTML=phoneShell(
+    '<div class="journey-hero">'+
+      '<div class="row between" style="align-items:flex-start;">'+logoBadge(64,'5px 8px')+
+        '<div class="row" style="gap:8px;">'+giftIconHTML(reward)+'<span class="chip mono" style="background:rgba(255,255,255,.14); color:#fff; border-color:transparent;">'+p.passportId.split('-')[1]+'</span></div>'+
+      '</div>'+
+      '<h1>Your Community Health<br>Journey Starts Here</h1>'+
+      '<p>Choose a destination and explore the experiences across Community Health.</p>'+
+      '<div class="journey-hero__progress"><span>'+progressLine+'</span><div class="dot-track">'+dots+'</div></div>'+
+    '</div>'+
+    '<div class="screen-pad" style="padding-top:20px;">'+
+      '<div class="journey-grid">'+cards+'</div>'+
+      '<button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="navigate(\'#/passport\')">'+svgIcon('qr',16)+' View My Passport</button>'+
+      '<div class="cover__foot" style="color:var(--text-muted); margin-top:16px;"><button onclick="switchPassport()">Not you? Switch passport</button><button onclick="navigate(\'#/redeem\')">Staff desk</button></div>'+
+    '</div>'
+  , {demo:true});
+}
+
+/* ------------------------------- gift icon & modal ----------------------------- */
+function giftIconHTML(reward){
+  if(!reward) return '';
+  return '<button class="gift-badge-top'+(reward.giftCollected?' gift-badge-top--done':'')+'" onclick="openGiftModal()" aria-label="View your gift">'+svgIcon('gift',16)+'</button>';
+}
+function openGiftModal(){
+  const session=STORE.getSession(); if(!session) return;
+  const reward=STORE.getReward(session.passportId); if(!reward) return;
+  const giveaway=(STORE.get().meta||{}).giveaway||defaultGiveaway();
+  const modal=document.createElement('div'); modal.className='modal-backdrop'; modal.id='giftModalBackdrop';
+  modal.innerHTML='<div class="modal" style="text-align:center; max-width:340px;">'+
+    '<div style="font-size:34px; line-height:1;">🎁</div>'+
+    '<h3 style="margin-top:10px;">Your Gift is Ready</h3>'+
+    '<p style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-top:6px;">You’ve unlocked your showcase giveaway!</p>'+
+    '<p class="muted small" style="margin:6px 0 14px;">'+escapeHtml(giveaway.instructions||'Continue exploring and collecting stamps, or collect your gift when you’re ready.')+'</p>'+
+    '<div class="card" style="text-align:left; margin-bottom:16px;"><b class="small">Gift collection point</b><p class="small muted" style="margin-top:2px;">'+escapeHtml(giveaway.collectionPoint||'To be confirmed')+'</p></div>'+
+    '<button class="btn btn-primary btn-block" onclick="closeGiftModal(); navigate(\'#/reward\');">View my gift pass</button>'+
+    '<button class="btn btn-ghost btn-block" onclick="closeGiftModal()">Keep exploring</button>'+
+  '</div>';
+  modal.addEventListener('click', function(e){ if(e.target===modal) closeGiftModal(); });
+  document.body.appendChild(modal);
+}
+function closeGiftModal(){ const m=document.getElementById('giftModalBackdrop'); if(m) m.remove(); }
+
+/* ------------------------------- passport pages ----------------------------- */
+function renderPassportScreen(forActivityRoute){
+  const session=STORE.getSession();
+  if(!session){ location.hash='#/'; return; }
+  const p=STORE.getParticipant(session.passportId);
+  if(!p){ STORE.clearSession(); location.hash='#/'; return; }
+  const depts=STORE.activeDepartments().filter(d=>STORE.activeActivitiesFor(d.id).length>0);
+  if(depts.length===0){ depts.push({id:'none',name:'Showcase',icon:'star'}); }
+  if(currentPageIndex>=depts.length) currentPageIndex=0;
+  const root=document.getElementById('app');
+  root.innerHTML=phoneShell(
+    '<div class="passport-head">'+
+      '<button class="iconbtn" onclick="navigate(\'#/explore\')" aria-label="Explore Departments">'+svgIcon('chevronLeft',18)+'</button>'+
+      '<button class="passport-head__title" style="background:none; border:none; cursor:pointer; font:inherit;" onclick="navigate(\'#/explore\')">Explore Departments</button>'+
+      '<span class="chip mono">'+p.passportId.split('-')[1]+'</span>'+
+    '</div>'+
+    '<div class="passport-body" id="passportBody">'+
+      '<div class="passport-nav"><button class="iconbtn" onclick="flipPage(-1)">'+svgIcon('chevronLeft',18)+'</button><button class="iconbtn" onclick="flipPage(1)">'+svgIcon('chevronRight',18)+'</button></div>'+
+      '<div id="pageHost"></div>'+
+      '<div class="page-dots">'+depts.map((d,i)=>'<i class="'+(i===currentPageIndex?'on':'')+'"></i>').join('')+'</div>'+
+    '</div>', {demo:true});
+  window._depts=depts;
+  paintPage(depts[currentPageIndex], p, null);
+  attachSwipe();
+}
+function paintPage(dept, participant, enterFrom){
+  const host=document.getElementById('pageHost');
+  if(!host) return;
+  const acts=dept.id==='none'? [] : STORE.activeActivitiesFor(dept.id);
+  let slots='';
+  acts.forEach(function(a){
+    const has=STORE.hasStamp(participant.passportId, a.id);
+    if(has){
+      const rec=STORE.get().stamps[participant.passportId+'__'+a.id];
+      slots+='<div class="stamp-slot" data-activity-id="'+a.id+'">'+buildStampSVG(a,dept,rec.dateTimeCollected)+'<b>'+escapeHtml(a.title)+'</b><span>'+formatDate(rec.dateTimeCollected)+'</span></div>';
+    } else {
+      slots+='<div class="stamp-slot empty tappable" data-activity-id="'+a.id+'" onclick="openScanner(\''+a.id+'\')" role="button" tabindex="0" aria-label="Scan QR to collect '+escapeHtml(a.title)+' stamp"><div class="stamp-slot__empty-icon tappable-icon">'+svgIcon(a.icon,26)+'</div><b>'+escapeHtml(a.title)+'</b>'+(a.countsTowardReward? '<span>Not yet collected</span>' : '<span class="tag-optional">Bonus</span>')+'<span class="stamp-slot__scan-hint">Tap to scan</span></div>';
+    }
+  });
+  const initStyle = enterFrom ? 'transform:rotateY('+(enterFrom==='right'?70:-70)+'deg); opacity:0;' : '';
+  host.innerHTML='<div class="passport-page" style="'+initStyle+'">'+
+    '<div class="page-watermark">'+svgIcon(dept.icon||'star',160)+'</div>'+
+    '<div class="dept-head"><div class="dept-head__icon">'+svgIcon(dept.icon||'star',22)+'</div><div><h2>'+escapeHtml(dept.name)+'</h2><span>'+acts.length+' station'+(acts.length===1?'':'s')+'</span></div></div>'+
+    (acts.length? '<div class="stamp-grid">'+slots+'</div>' : '<p class="muted small" style="margin-top:30px; text-align:center;">No active stations in this section yet.</p>')+
+  '</div>';
+  if(enterFrom){
+    requestAnimationFrame(function(){ const el=host.querySelector('.passport-page'); if(el){ el.style.transform='rotateY(0deg)'; el.style.opacity='1'; } });
+  }
+}
+function flipPage(dir){
+  const depts=window._depts||[];
+  if(depts.length<2) return;
+  const host=document.getElementById('pageHost');
+  const el=host.querySelector('.passport-page');
+  const reduced=prefersReducedMotion();
+  const finish=function(){
+    currentPageIndex=(currentPageIndex+dir+depts.length)%depts.length;
+    const session=STORE.getSession(); const p=STORE.getParticipant(session.passportId);
+    paintPage(depts[currentPageIndex], p, dir>0?'right':'left');
+    const dots=document.querySelectorAll('.page-dots i');
+    dots.forEach((d,i)=>d.classList.toggle('on', i===currentPageIndex));
+  };
+  if(reduced || !el){ finish(); return; }
+  el.classList.add(dir>0?'leaving-l':'leaving-r');
+  setTimeout(finish, 260);
+}
+function attachSwipe(){
+  const body=document.getElementById('passportBody'); if(!body) return;
+  let sx=0, sy=0;
+  body.addEventListener('touchstart', function(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; }, {passive:true});
+  body.addEventListener('touchend', function(e){
+    const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)){ flipPage(dx<0?1:-1); }
+  }, {passive:true});
+}
+
+/* ------------------------------- demo panel -------------------------------- */
+function demoFabHTML(){
+  return '<button class="demo-fab" onclick="openDemoSheet()">'+svgIcon('wand',15)+' Demo controls</button>';
+}
+function openDemoSheet(){
+  const session=STORE.getSession(); if(!session) return;
+  const state=STORE.get();
+  let rows='';
+  state.activities.filter(a=>a.active).forEach(function(a){
+    const dept=state.departments.find(d=>d.id===a.deptId)||{name:'—'};
+    const has=STORE.hasStamp(session.passportId, a.id);
+    rows+='<div class="demo-row"><div class="demo-row__label"><b>'+escapeHtml(a.title)+'</b><span>'+escapeHtml(dept.name)+' · '+a.id+(a.countsTowardReward?'':' · bonus')+'</span></div>'+
+      (has? '<span class="pill-status done">Collected</span>' : '<button class="btn btn-primary btn-sm" onclick="simulateScan(\''+a.id+'\')">Simulate scan</button>')+
+      '</div>';
+  });
+  const div=document.createElement('div');
+  div.id='demoSheet'; div.className='demo-sheet';
+  div.innerHTML='<div class="demo-sheet__panel">'+
+    '<h3>Demo controls</h3><p>For testing only — this fires the exact same route a real QR scan would (<span class="mono">'+ACT_PREFIX+'CODE</span>), so it exercises the live logic end to end before the printed codes are ready.</p>'+
+    rows+
+    '<div style="display:flex; gap:8px; margin-top:16px;">'+
+    '<button class="btn btn-outline btn-sm" style="flex:1;" onclick="closeDemoSheetIfAny(); switchPassport();">New test participant</button>'+
+    '<button class="btn btn-ghost btn-sm" onclick="closeDemoSheetIfAny()">Close</button>'+
+    '</div></div>';
+  div.addEventListener('click', function(e){ if(e.target===div) closeDemoSheetIfAny(); });
+  document.body.appendChild(div);
+}
+function closeDemoSheetIfAny(){ const el=document.getElementById('demoSheet'); if(el) el.remove(); }
+function simulateScan(activityId){ closeDemoSheetIfAny(); location.hash=ACT_PREFIX+activityId; }
+
+/* --------------------------- in-app camera QR scanner ------------------------ */
+let scanState=null; // {activityId, stream, video, raf, canvas, lastWarnAt}
+function openScanner(activityId){
+  if(scanState) closeScanner();
+  const state=STORE.get();
+  const activity=state.activities.find(a=>a.id===activityId);
+  if(!activity || !activity.active){ toast('This activity is not available.'); return; }
+  const session=STORE.getSession();
+  if(!session){ toast('Register first to start collecting stamps.'); navigate('#/register'); return; }
+  if(STORE.hasStamp(session.passportId, activityId)){ toast('Stamp already collected.'); return; }
+  const ov=document.createElement('div'); ov.className='scan-overlay'; ov.id='scanOverlay';
+  ov.innerHTML='<div class="scan-overlay__top"><span style="width:34px;"></span><span class="scan-overlay__title">Scan QR for<br>'+escapeHtml(activity.title)+'</span><button class="scan-overlay__close" onclick="closeScanner()" aria-label="Close scanner">'+svgIcon('close',16)+'</button></div>'+
+    '<div class="scan-overlay__video-wrap" id="scanVideoWrap"><div class="scan-overlay__frame"></div></div>'+
+    '<div class="scan-overlay__bottom" id="scanBottom"><div class="scan-overlay__status" id="scanStatus">Point your camera at the QR code at this station.</div></div>';
+  document.body.appendChild(ov);
+  scanState={activityId:activityId, stream:null, video:null, raf:null, canvas:document.createElement('canvas'), lastWarnAt:0};
+  startScannerCamera();
+}
+function startScannerCamera(){
+  if(!scanState) return;
+  if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){
+    showScannerFallback('Camera scanning is not supported in this browser.');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ideal:1920}, height:{ideal:1080} }, audio:false }).then(function(stream){
+    if(!scanState){ stream.getTracks().forEach(function(t){ t.stop(); }); return; }
+    scanState.stream=stream;
+    const wrap=document.getElementById('scanVideoWrap'); if(!wrap){ stream.getTracks().forEach(function(t){ t.stop(); }); return; }
+    const video=document.createElement('video');
+    video.setAttribute('playsinline',''); video.setAttribute('autoplay',''); video.muted=true;
+    video.srcObject=stream;
+    wrap.insertBefore(video, wrap.firstChild);
+    scanState.video=video;
+    video.play().catch(function(){});
+    video.addEventListener('loadedmetadata', function(){ scanLoop(); });
+  }).catch(function(err){
+    const msg = (err && (err.name==='NotAllowedError' || err.name==='PermissionDeniedError'))
+      ? 'Camera access was blocked. Please allow camera permission, or use your phone’s camera app to scan the QR code at this station.'
+      : 'Could not start the camera. Please use your phone’s camera app to scan the QR code at this station.';
+    showScannerFallback(msg);
+  });
+}
+function scanLoop(){
+  if(!scanState || !scanState.video) return;
+  const video=scanState.video;
+  if(video.readyState===video.HAVE_ENOUGH_DATA && video.videoWidth){
+    const canvas=scanState.canvas;
+    canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+    const ctx=canvas.getContext('2d', {willReadFrequently:true});
+    ctx.drawImage(video,0,0,canvas.width,canvas.height);
+    try{
+      const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
+      const result=(typeof jsQR!=='undefined')? jsQR(imgData.data, imgData.width, imgData.height, {inversionAttempts:'attemptBoth'}) : null;
+      if(result && result.data){ onScanDetected(result.data); if(!scanState) return; }
+    }catch(e){}
+  }
+  scanState.raf=requestAnimationFrame(scanLoop);
+}
+function extractActivityCodeFromScan(text){
+  if(!text) return null;
+  const idx=text.indexOf(ACT_PREFIX);
+  if(idx>=0){
+    const tail=text.slice(idx+ACT_PREFIX.length);
+    try{ return decodeURIComponent(tail).trim().toUpperCase(); }catch(e){ return tail.trim().toUpperCase(); }
+  }
+  const trimmed=text.trim().toUpperCase();
+  if(/^[A-Z0-9][A-Z0-9-]{1,40}$/.test(trimmed)) return trimmed;
+  return null;
+}
+function onScanDetected(rawText){
+  if(!scanState) return;
+  const expected=scanState.activityId;
+  const code=extractActivityCodeFromScan(rawText);
+  const state=STORE.get();
+  const matchedActivity = code ? state.activities.find(function(a){ return a.id===code; }) : null;
+  if(!matchedActivity || !matchedActivity.active){ warnScanner('Please scan the QR code for this activity.'); return; }
+  if(code!==expected){ warnScanner('Please scan the QR code for this activity.'); return; }
+  const session=STORE.getSession();
+  if(session && STORE.hasStamp(session.passportId, code)){
+    closeScanner();
+    toast('Stamp already collected.');
+    return;
+  }
+  closeScanner();
+  location.hash=ACT_PREFIX+code;
+}
+function warnScanner(msg){
+  if(!scanState) return;
+  const now=Date.now();
+  if(now-scanState.lastWarnAt<1500) return;
+  scanState.lastWarnAt=now;
+  const el=document.getElementById('scanStatus');
+  if(el){
+    el.textContent=msg; el.classList.add('warn');
+    setTimeout(function(){ if(el && el.isConnected){ el.textContent='Point your camera at the QR code at this station.'; el.classList.remove('warn'); } }, 1600);
+  }
+}
+function showScannerFallback(msg){
+  const bottom=document.getElementById('scanBottom');
+  if(!bottom) return;
+  bottom.innerHTML='<div class="scan-overlay__fallback"><h4>Camera unavailable</h4><p>'+escapeHtml(msg)+'</p><button class="btn btn-primary btn-block" onclick="closeScanner()">Close</button></div>';
+}
+function closeScanner(){
+  if(scanState){
+    if(scanState.raf) cancelAnimationFrame(scanState.raf);
+    if(scanState.stream) scanState.stream.getTracks().forEach(function(t){ t.stop(); });
+    scanState=null;
+  }
+  const ov=document.getElementById('scanOverlay'); if(ov) ov.remove();
+}
+window.addEventListener('hashchange', function(){ if(scanState) closeScanner(); });
+
+/* --------------------------- activity / stamping flow ------------------------ */
+function handleActivityRoute(code){
+  const session=STORE.getSession();
+  if(!session){ pendingActivity=code; toast('Register first to start collecting stamps.'); location.hash='#/register'; return; }
+  const state=STORE.get();
+  const activity=state.activities.find(a=>a.id===code);
+  const participant=STORE.getParticipant(session.passportId);
+  if(!participant){ pendingActivity=code; location.hash='#/register'; return; }
+  if(!activity || !activity.active){ showStampOverlayInvalid(); return; }
+  const dept=state.departments.find(d=>d.id===activity.deptId)||{name:'Showcase',icon:'star'};
+  const alreadyBefore=STORE.hasStamp(participant.passportId, activity.id);
+  if(alreadyBefore){ showStampOverlayAlready(activity, dept); return; }
+  const slotEl=document.querySelector('.stamp-slot[data-activity-id="'+activity.id+'"]');
+  if(slotEl) slotEl.classList.add('highlight');
+  runStampAnimation(activity, dept, participant);
+}
+function showStampOverlayInvalid(){
+  const ov=document.createElement('div'); ov.className='stamp-overlay'; ov.id='stampOverlay';
+  ov.innerHTML='<div class="stamp-overlay__card"><h3 style="color:var(--danger);">QR not recognised</h3><p class="muted small">This activity code is inactive or no longer exists. Please check with a showcase host.</p><button class="btn btn-primary btn-block" onclick="closeStampOverlay()">Continue exploring</button></div>';
+  document.body.appendChild(ov);
+}
+function showStampOverlayAlready(activity, dept){
+  const ov=document.createElement('div'); ov.className='stamp-overlay'; ov.id='stampOverlay';
+  const rec=STORE.get().stamps[STORE.getSession().passportId+'__'+activity.id];
+  ov.innerHTML='<div class="stamp-overlay__card">'+
+    '<div class="stamp-overlay__slot glow" style="border-style:solid;">'+buildStampSVG(activity,dept,rec.dateTimeCollected)+'</div>'+
+    '<div class="stamp-overlay__already"><b style="font-size:16px;">STAMP ALREADY COLLECTED</b><p class="muted small">You collected this stamp on '+formatDateTime(rec.dateTimeCollected)+'.</p></div>'+
+    '<button class="btn btn-primary btn-block" onclick="closeStampOverlay()">Continue exploring</button>'+
+  '</div>';
+  document.body.appendChild(ov);
+}
+function closeStampOverlay(){
+  const el=document.getElementById('stampOverlay'); if(el) el.remove();
+  // Refresh in place on the passport page (does NOT return the participant to the
+  // Explore Departments home screen) so they see the newly collected stamp sitting
+  // in its actual position and can keep flipping pages or leave whenever they choose.
+  navigate('#/passport');
+}
+function runStampAnimation(activity, dept, participant){
+  // Writes the stamp immediately — the animation below is purely visual and never
+  // blocks or delays the data being recorded.
+  const result=STORE.collectStamp(participant.passportId, activity.id);
+  const reduced=prefersReducedMotion();
+  const slot=document.querySelector('.stamp-slot[data-activity-id="'+activity.id+'"]');
+  const iconBox=slot? slot.querySelector('.stamp-slot__empty-icon') : null;
+
+  // Land the stamp for real: repaint the current passport page in place (the
+  // participant never leaves it), give a brief toast — not a card that covers the
+  // page — and only afterwards, as a fully separate pop-up, celebrate a gift
+  // unlock or full completion if this stamp triggered one.
+  const settle=function(){
+    const freshParticipant=STORE.getParticipant(participant.passportId);
+    paintPage(dept, freshParticipant, null);
+    try{ history.replaceState(null, '', DEPT_PREFIX+dept.id); }catch(e){}
+    toast('Stamp Collected!');
+    if(result.newlyFullyComplete){ setTimeout(function(){ showFullCompletionModal(freshParticipant); }, 550); }
+    else if(result.newlyRewardUnlocked){ setTimeout(function(){ showGiftUnlockedModal(freshParticipant); }, 550); }
+  };
+
+  if(reduced || !iconBox){ settle(); return; }
+
+  const rect=iconBox.getBoundingClientRect();
+  const guard=document.createElement('div'); guard.className='stamp-fx-guard'; guard.id='stampFxGuard';
+  document.body.appendChild(guard);
+  const fx=document.createElement('div'); fx.className='live-stamp-fx'; fx.id='liveStampFx';
+  fx.style.left=rect.left+'px'; fx.style.top=rect.top+'px'; fx.style.width=rect.width+'px'; fx.style.height=rect.height+'px';
+  fx.innerHTML='<div class="live-stamp-fx__tool" id="fxTool">'+stampToolSVG(activity)+'</div>'+
+    '<div class="live-stamp-fx__ink" id="fxInk"></div>';
+  document.body.appendChild(fx);
+  requestAnimationFrame(function(){ const t=document.getElementById('fxTool'); if(t) t.classList.add('drop'); });
+  setTimeout(function(){ const t=document.getElementById('fxTool'); if(t) t.classList.add('impact'); }, 240);
+  setTimeout(function(){
+    const ink=document.getElementById('fxInk');
+    if(ink){ ink.innerHTML=buildStampSVG(activity, dept, result.record.dateTimeCollected); ink.classList.add('show'); }
+    const t=document.getElementById('fxTool'); if(t) t.classList.add('retreat');
+  }, 380);
+  setTimeout(function(){
+    const g=document.getElementById('stampFxGuard'); if(g) g.remove();
+    const f=document.getElementById('liveStampFx'); if(f) f.remove();
+    settle();
+  }, 720);
+}
+function stampToolSVG(activity){
+  const color=INK_COLORS[activity.stampColor]||INK_COLORS.navy;
+  return '<svg viewBox="0 0 64 90"><rect x="20" y="0" width="24" height="34" rx="6" fill="var(--stone)"/><rect x="10" y="30" width="44" height="14" rx="4" fill="'+color+'"/><ellipse cx="32" cy="58" rx="26" ry="18" fill="'+color+'" opacity="0.92"/></svg>';
+}
+function addConfettiBurst(card){
+  const burst=document.createElement('div'); burst.className='burst';
+  let items='';
+  for(let i=0;i<14;i++){
+    const ang=(i/14)*360; const dist=90+Math.random()*40;
+    const dx=Math.cos(ang*Math.PI/180)*dist, dy=Math.sin(ang*Math.PI/180)*dist;
+    const colors=[INK_COLORS.turquoise, INK_COLORS.navy, INK_COLORS.green, INK_COLORS.teal];
+    items+='<svg style="--dx:'+dx+'px; --dy:'+dy+'px; --dr:'+(Math.random()*180-90)+'deg;" width="16" height="16" viewBox="0 0 24 24" fill="'+colors[i%colors.length]+'">'+ICONS.petal+'</svg>';
+  }
+  burst.innerHTML=items;
+  card.appendChild(burst);
+}
+// Gift Unlocked and Passport Complete are shown as their own separate pop-ups —
+// distinct modal cards that only appear once the stamp-collected overlay has
+// already finished and closed, never merged into the stamp confirmation itself.
+function showGiftUnlockedModal(participant){
+  const prog=STORE.getProgress(participant.passportId);
+  const giveaway=(STORE.get().meta||{}).giveaway||defaultGiveaway();
+  const fallbackSub='You’ve collected '+prog.threshold+' stamp'+(prog.threshold===1?'':'s')+' and unlocked your gift!';
+  const modal=document.createElement('div'); modal.className='modal-backdrop'; modal.id='giftUnlockedBackdrop';
+  modal.innerHTML='<div class="modal" style="text-align:center; max-width:340px; position:relative; overflow:hidden;">'+
+    '<div style="font-size:36px; line-height:1;">🎁</div>'+
+    '<h3 style="margin-top:10px;">'+escapeHtml(giveaway.heading||'Gift Unlocked!')+'</h3>'+
+    '<p class="muted small" style="margin-top:6px;">'+escapeHtml(giveaway.subheading||fallbackSub)+'</p>'+
+    '<button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="closeGiftUnlockedModal()">Continue exploring</button>'+
+  '</div>';
+  modal.addEventListener('click', function(e){ if(e.target===modal) closeGiftUnlockedModal(); });
+  document.body.appendChild(modal);
+  addConfettiBurst(modal.querySelector('.modal'));
+}
+function closeGiftUnlockedModal(){ const m=document.getElementById('giftUnlockedBackdrop'); if(m) m.remove(); }
+function showFullCompletionModal(participant){
+  const giveaway=(STORE.get().meta||{}).giveaway||defaultGiveaway();
+  const modal=document.createElement('div'); modal.className='modal-backdrop'; modal.id='fullCompletionBackdrop';
+  modal.innerHTML='<div class="modal" style="text-align:center; max-width:340px; position:relative; overflow:hidden;">'+
+    '<div style="font-size:36px; line-height:1;">✨</div>'+
+    '<h3 style="margin-top:10px;">'+escapeHtml(giveaway.completionHeading||'Passport Complete!')+'</h3>'+
+    '<p class="muted small" style="margin-top:6px;">'+escapeHtml(giveaway.completionSubheading||'You explored all Community Health experiences!')+'</p>'+
+    '<button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="closeFullCompletionModal()">Continue exploring</button>'+
+  '</div>';
+  modal.addEventListener('click', function(e){ if(e.target===modal) closeFullCompletionModal(); });
+  document.body.appendChild(modal);
+  addConfettiBurst(modal.querySelector('.modal'));
+}
+function closeFullCompletionModal(){ const m=document.getElementById('fullCompletionBackdrop'); if(m) m.remove(); }
+
+/* --------------------------------- reward ----------------------------------- */
+function renderRewardScreen(){
+  const session=STORE.getSession(); if(!session){ location.hash='#/'; return; }
+  const p=STORE.getParticipant(session.passportId);
+  const reward=STORE.getReward(session.passportId);
+  const giveaway=(STORE.get().meta||{}).giveaway||{};
+  const root=document.getElementById('app');
+  if(!p || !reward){
+    const prog=p? STORE.getProgress(p.passportId) : {collectedPool:0, threshold:1};
+    root.innerHTML=phoneShell('<div class="screen-pad"><h2>No gift yet</h2><p class="muted small">Collect '+prog.threshold+' stamp'+(prog.threshold===1?'':'s')+' to unlock your reward pass — you have '+prog.collectedPool+' so far.</p><button class="btn btn-primary btn-block" onclick="navigate(\'#/explore\')">Back to exploring</button></div>', {demo:true});
+    return;
+  }
+  root.innerHTML=phoneShell('<div class="screen-pad">'+
+    '<button class="iconbtn" onclick="navigate(\'#/explore\')">'+svgIcon('chevronLeft',18)+'</button>'+
+    '<div class="reward-card" style="margin-top:16px;">'+
+      '<div style="display:flex; justify-content:center; margin-bottom:14px;">'+logoBadge(96,'6px 9px')+'</div>'+
+      '<div class="reward-card__ribbon">'+escapeHtml(giveaway.eyebrow||'GIFT UNLOCKED')+'</div>'+
+      '<h2>'+escapeHtml(giveaway.heading||'Congratulations!')+'</h2>'+
+      '<p style="color:#CFE9EE; font-size:13px; margin-top:4px;">'+escapeHtml(giveaway.subheading||'You completed the Community Health Experience Passport.')+'</p>'+
+      '<p style="color:#CFE9EE; font-size:12.5px; margin-top:8px;">'+escapeHtml(p.name)+'</p>'+
+      '<div class="reward-card__qr"><div id="rewardQR"></div></div>'+
+      '<div class="reward-card__code">'+reward.redemptionCode+'</div>'+
+    '</div>'+
+    '<div class="card" style="margin-top:14px;"><b class="small">Gift collection point</b><p class="small muted" style="margin-top:2px;">'+escapeHtml(giveaway.collectionPoint||'To be confirmed')+'</p></div>'+
+    '<p class="muted small" style="text-align:center; margin-top:12px;">'+escapeHtml(giveaway.instructions||'Please visit the giveaway point to collect your gift.')+(reward.giftCollected? ' Already collected on '+formatDate(reward.giftCollectionTime)+'.' : '')+'</p>'+
+  '</div>', {demo:true});
+  renderQRInto('rewardQR', reward.redemptionCode, 140, '#000000', 'H');
+}
+
+/* --------------------------------- redeem (staff) ---------------------------- */
+function staffLoginPaneHTML(message){
+  return '<div class="screen"><div class="login-pane">'+
+    '<div style="margin:0 auto 14px;">'+logoImgTag(170)+'</div>'+
+    '<h2 style="font-size:18px;">Staff desk access</h2><p class="muted small" style="margin:6px 0 18px;">'+(message||'Enter the desk access code to continue.')+'</p>'+
+    '<div class="field"><input id="staffPass" type="password" placeholder="Access code"></div>'+
+    '<button class="btn btn-primary btn-block" onclick="staffLogin()">Enter</button>'+
+    '<button class="btn btn-ghost btn-block" onclick="navigate(\'#/\')">Back</button>'+
+  '</div></div>';
+}
+function redeemHTML(){
+  if(!STORE.isStaff()) return staffLoginPaneHTML('Enter the desk access code to verify gifts and access QR codes.');
+  return '<div class="screen-pad">'+
+    '<button class="iconbtn" onclick="navigate(\'#/\')">'+svgIcon('chevronLeft',18)+'</button>'+
+    '<h2 style="margin-top:14px; font-size:18px;">Verify a reward pass</h2>'+
+    '<p class="muted small">Enter the participant\'s redemption code or passport ID.</p>'+
+    '<div class="field"><input id="redeemInput" placeholder="GIFT-XXXXXX or ADPHC-XXXXXX" style="text-transform:uppercase;"></div>'+
+    '<button class="btn btn-primary btn-block" onclick="lookupRedemption()">Look up</button>'+
+    '<div id="redeemResult" style="margin-top:18px;"></div>'+
+    '<div class="divider"></div>'+
+    '<div class="card"><h3 style="font-size:14px; margin-bottom:6px;">QR codes</h3><p class="small muted" style="margin-bottom:10px;">Display the entrance or any activity QR full-screen for scanning, or download them as PNGs.</p><button class="btn btn-primary btn-block" onclick="navigate(\'#/qr\')">Open QR codes</button></div>'+
+  '</div>';
+}
+function renderRedeemScreen(){ document.getElementById('app').innerHTML=phoneShell(redeemHTML()); }
+function staffLogin(){
+  const v=document.getElementById('staffPass').value;
+  const h=ADPHCcrypto.sha256Hex(v);
+  if(ADPHCcrypto.safeEqual(h, ADMIN_PASSCODE_HASH)){ STORE.setRole('admin'); render(); }
+  else if(ADPHCcrypto.safeEqual(h, STAFF_PASSCODE_HASH)){ STORE.setRole('staff'); render(); }
+  else toast('Incorrect access code.');
+}
+function lookupRedemption(){
+  const val=document.getElementById('redeemInput').value.trim().toUpperCase();
+  let hit = val.startsWith('GIFT-')? STORE.redeemByCode(val) : (function(){ const p=STORE.findByPassportId(val); return p? {passportId:p.passportId, reward:STORE.getReward(p.passportId), participant:p} : null; })();
+  const box=document.getElementById('redeemResult');
+  if(!hit || !hit.reward){ box.innerHTML='<div class="card"><p class="muted small">No unlocked reward found for that code.</p></div>'; return; }
+  box.innerHTML='<div class="card"><div class="row between"><b>'+escapeHtml(hit.participant.name)+'</b>'+(hit.reward.giftCollected? '<span class="pill-status done">Collected</span>':'<span class="chip">Eligible</span>')+'</div>'+
+    '<p class="mono small muted" style="margin:6px 0;">'+hit.passportId+' · '+hit.reward.redemptionCode+'</p>'+
+    (hit.reward.giftCollected? '<p class="small muted">Gift already collected on '+formatDateTime(hit.reward.giftCollectionTime)+'.</p>' : '<button class="btn btn-primary btn-block" onclick="confirmRedeem(\''+hit.passportId+'\')">Mark gift collected</button>')+
+  '</div>';
+}
+function confirmRedeem(passportId){
+  const res=STORE.markGiftCollected(passportId);
+  if(res==='already'){ toast('Already marked as collected.'); } else if(res){ toast('Gift marked as collected.'); }
+  lookupRedemption();
+}
+
+/* --------------------------- staff QR codes screen --------------------------- */
+function renderStaffQRScreen(){
+  const root=document.getElementById('app');
+  if(!STORE.isStaff()){ root.innerHTML=phoneShell(staffLoginPaneHTML('Enter the desk access code to view and display QR codes.')); return; }
+  const state=STORE.get();
+  const acts=state.activities.slice().sort((a,b)=>a.order-b.order);
+  root.innerHTML='<div class="admin-shell" style="max-width:920px;">'+
+    '<div style="padding:22px 26px 30px;">'+
+      '<button class="iconbtn" onclick="navigate(\'#/redeem\')">'+svgIcon('chevronLeft',18)+'</button>'+
+      '<h2 style="margin:16px 0 4px;">QR codes</h2>'+
+      '<p class="muted small" style="margin-bottom:6px; max-width:640px;">Tap a code to show it full-screen for a phone camera to scan, or download it as a PNG. To test the full journey on one phone: scan Entrance first and register, then scan an activity QR such as Spirometry Testing, then scan another such as Muscle Strength Testing — both stamps land on the same passport.</p>'+
+      '<div class="card" style="margin:14px 0 20px; border-color:var(--warning);"><b class="small" style="color:var(--warning);">Before you print anything:</b><p class="small muted" style="margin-top:4px;">These QR codes already point to this artifact\'s permanent link — the URL will not change when this app is updated again, so nothing here is a throwaway preview link. It IS currently private, though: open the share menu on this page and set it so your team can view it (or add them directly), otherwise their phone cameras will hit a sign-in wall when they scan. Once shared, it is safe to print these for real.</p></div>'+
+      '<div class="qr-grid">'+
+        '<div class="qr-sign qr-card"><span class="chip" style="margin-bottom:8px;">ENTRANCE / REGISTRATION</span><div id="qrStaffEntrance"></div>'+
+        '<b class="small" style="display:block; margin-top:8px;">Scan this first</b><span class="small muted">Registers a new visitor or reopens their passport</span>'+
+        '<div class="row" style="gap:8px; margin-top:10px; justify-content:center;"><button class="btn btn-outline btn-sm" onclick="showFullscreenQR(\'entrance\',\'Entrance / Registration\')">View full-screen</button><button class="btn btn-outline btn-sm" onclick="downloadEntranceQR()">Download PNG</button></div></div>'+
+        acts.map(function(a){ const dept=state.departments.find(d=>d.id===a.deptId);
+          return '<div class="qr-sign qr-card"><div id="qrStaff-'+a.id+'"></div>'+
+            '<b class="small" style="display:block; margin-top:8px;">'+escapeHtml(a.title)+'</b>'+
+            '<span class="small muted">'+(dept?escapeHtml(dept.name):'—')+'</span><br>'+
+            '<span class="small muted mono">'+a.id+(a.active?'':' · inactive')+'</span>'+
+            '<div class="row" style="gap:8px; margin-top:10px; justify-content:center;"><button class="btn btn-outline btn-sm" onclick="showFullscreenQR(\''+a.id+'\',\''+escapeHtml(a.title).replace(/'/g,"\\'")+'\')">View full-screen</button><button class="btn btn-outline btn-sm" onclick="downloadActivityQR(\''+a.id+'\')">Download PNG</button></div></div>'; }).join('')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+  renderQRInto('qrStaffEntrance', baseUrl(), 150, '#000000', 'H');
+  acts.forEach(function(a){ renderQRInto('qrStaff-'+a.id, baseUrl()+ACT_PREFIX+a.id, 150, '#000000', 'H'); });
+}
+function showFullscreenQR(code, label){
+  const isEntrance = code==='entrance';
+  const text = isEntrance? baseUrl() : baseUrl()+ACT_PREFIX+code;
+  const ov=document.createElement('div'); ov.className='stamp-overlay'; ov.id='fsQrOverlay';
+  ov.style.background='rgba(250,253,254,0.98)';
+  const size=Math.max(200, Math.min(380, Math.round(Math.min(window.innerWidth,window.innerHeight)*0.62)));
+  ov.innerHTML='<div style="text-align:center; max-width:92vw;">'+
+    '<div id="fsQrHost" style="display:inline-block; background:#fff; padding:22px; border-radius:20px; box-shadow:var(--shadow);"></div>'+
+    '<h3 style="margin-top:18px; color:var(--navy);">'+escapeHtml(label)+'</h3>'+
+    '<p class="muted small">Scan with any phone camera app.</p>'+
+    '<button class="btn btn-primary" style="margin-top:10px;" onclick="closeFullscreenQR()">Close</button>'+
+  '</div>';
+  document.body.appendChild(ov);
+  renderQRInto('fsQrHost', text, size, '#000000', 'H');
+}
+function closeFullscreenQR(){ const el=document.getElementById('fsQrOverlay'); if(el) el.remove(); }
+async function downloadEntranceQR(){
+  const container=document.getElementById('qrStaffEntrance');
+  const canvas=container? container.querySelector('canvas') : null;
+  if(!canvas){ toast('QR image is not ready yet.'); return; }
+  canvas.toBlob(async function(blob){
+    if(!blob){ toast('Could not generate the image.'); return; }
+    await saveFileBlob(blob, 'adphc-qr-entrance.png');
+  }, 'image/png');
+}
+
+/* ==================================== ADMIN ==================================== */
+const ADMIN_TABS=[
+  {id:'overview', label:'Overview'},
+  {id:'departments', label:'Sections'},
+  {id:'activities', label:'Activities'},
+  {id:'participants', label:'Participants'},
+  {id:'qr', label:'QR Codes'},
+  {id:'rewards', label:'Reward Rules'}
+];
+let adminTab='overview';
+function renderAdminRoot(){
+  const root=document.getElementById('app');
+  if(!STORE.isAdmin()){
+    root.innerHTML='<div class="admin-shell"><div class="screen"><div class="login-pane">'+
+      '<div style="margin:0 auto 14px;">'+logoImgTag(170)+'</div>'+
+      '<h2 style="font-size:18px;">Administrator sign-in</h2>'+
+      '<p class="muted small" style="margin:6px 0 18px;">Demo access code — replace with real staff authentication before this goes live.</p>'+
+      '<div class="field"><input id="adminPass" type="password" placeholder="Admin access code"></div>'+
+      '<button class="btn btn-primary btn-block" onclick="adminLogin()">Enter admin area</button>'+
+      '<button class="btn btn-ghost btn-block" onclick="navigate(\'#/\')">Back to passport</button>'+
+    '</div></div></div>';
+    return;
+  }
+  root.innerHTML='<div class="admin-shell">'+
+    '<div class="admin-layout">'+
+      '<div class="admin-nav">'+
+        '<div style="padding:8px 12px 16px;">'+logoImgTag(120)+'<span style="display:block; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-top:6px;">Admin</span></div>'+
+        ADMIN_TABS.map(t=>'<button data-tab="'+t.id+'" class="'+(adminTab===t.id?'active':'')+'" onclick="setAdminTab(\''+t.id+'\')">'+t.label+'</button>').join('')+
+        '<div style="flex:1;"></div>'+
+        '<button onclick="navigate(\'#/redeem\')">Gift desk →</button>'+
+        '<button onclick="adminLogout()">Sign out</button>'+
+      '</div>'+
+      '<div class="admin-main" id="adminMain"></div>'+
+    '</div>'+
+  '</div>';
+  paintAdminTab();
+}
+function adminLogin(){ const v=document.getElementById('adminPass').value;
+  if(ADPHCcrypto.safeEqual(ADPHCcrypto.sha256Hex(v), ADMIN_PASSCODE_HASH)){ STORE.setRole('admin'); render(); }
+  else toast('Incorrect admin code.'); }
+function adminLogout(){ sessionStorage.removeItem(ADMIN_SESSION_KEY); navigate('#/'); }
+function setAdminTab(t){ adminTab=t; paintAdminTab(); }
+
+function paintAdminTab(){
+  const main=document.getElementById('adminMain'); if(!main) return;
+  document.querySelectorAll('.admin-nav button[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===adminTab));
+  if(adminTab==='overview') return paintOverview(main);
+  if(adminTab==='departments') return paintDepartments(main);
+  if(adminTab==='activities') return paintActivities(main);
+  if(adminTab==='participants') return paintParticipants(main);
+  if(adminTab==='qr') return paintQR(main);
+  if(adminTab==='rewards') return paintRewardSettings(main);
+}
+
+function paintOverview(main){
+  const state=STORE.get();
+  const participants=Object.values(state.participants);
+  const totalScans=Object.keys(state.stamps).length;
+  const giftEligible=participants.filter(p=>p.passportCompleted).length;
+  const allDone=participants.filter(p=>p.allActivitiesCompleted).length;
+  const giftsCollected=Object.values(state.rewards).filter(r=>r.giftCollected).length;
+  const byActivity=state.activities.filter(a=>a.active).map(a=>({label:a.title, val:Object.keys(state.stamps).filter(k=>k.endsWith('__'+a.id)).length})).sort((a,b)=>b.val-a.val);
+  const byDept=state.departments.filter(d=>d.active).map(d=>{
+    const actIds=state.activities.filter(a=>a.deptId===d.id).map(a=>a.id);
+    const val=Object.keys(state.stamps).filter(k=>actIds.some(id=>k.endsWith('__'+id))).length;
+    return {label:d.name, val:val};
+  }).sort((a,b)=>b.val-a.val);
+  const maxA=Math.max(1, ...byActivity.map(x=>x.val));
+  const maxD=Math.max(1, ...byDept.map(x=>x.val));
+  main.innerHTML='<div class="admin-header"><h2>Overview</h2><div class="row" style="gap:8px;"><button class="btn btn-primary btn-sm" onclick="downloadReportCSV()">Download report (.csv)</button><button class="btn btn-outline btn-sm" onclick="downloadBackup()">Download data backup (.json)</button></div></div>'+
+    '<div class="stat-grid">'+
+      statTile(participants.length,'Total registered participants')+statTile(totalScans,'Total stamps collected')+
+      statTile(giftEligible,'Reached gift eligibility')+statTile(giftsCollected,'Gifts redeemed')+
+      statTile(allDone,'Completed all activities')+statTile(participants.length? Math.round(giftEligible/participants.length*100)+'%':'0%','Gift eligibility rate')+
+    '</div>'+
+    '<div class="row" style="align-items:flex-start; gap:20px; flex-wrap:wrap;">'+
+      '<div class="card" style="flex:1; min-width:260px;"><h3 style="font-size:14px; margin-bottom:12px;">Participation by activity</h3>'+barlist(byActivity,maxA)+'</div>'+
+      '<div class="card" style="flex:1; min-width:260px;"><h3 style="font-size:14px; margin-bottom:12px;">Participation by department</h3>'+barlist(byDept,maxD)+'</div>'+
+    '</div>';
+}
+function statTile(val,label){ return '<div class="stat-tile"><b>'+val+'</b><span>'+label+'</span></div>'; }
+function barlist(items,max){
+  if(!items.length) return '<p class="muted small">No data yet.</p>';
+  return '<div class="barlist">'+items.map(it=>'<div class="barlist__row"><span>'+escapeHtml(it.label)+'</span><div class="barlist__track"><div class="barlist__fill" style="width:'+Math.round(it.val/max*100)+'%;"></div></div><span class="barlist__val">'+it.val+'</span></div>').join('')+'</div>';
+}
+
+function paintDepartments(main){
+  const state=STORE.get();
+  const depts=state.departments.slice().sort((a,b)=>a.order-b.order);
+  main.innerHTML='<div class="admin-header"><h2>Sections</h2><button class="btn btn-primary btn-sm" onclick="openDeptModal()">Add section</button></div>'+
+    '<div class="table-wrap"><table><thead><tr><th>Order</th><th>Section</th><th>Icon</th><th>Status</th><th></th></tr></thead><tbody>'+
+    depts.map((d,i)=>'<tr><td>'+
+      '<button class="iconlink" '+(i===0?'disabled':'')+' onclick="reorderDept(\''+d.id+'\',-1)">'+svgIcon('chevronLeft',14)+'</button>'+
+      '<button class="iconlink" '+(i===depts.length-1?'disabled':'')+' onclick="reorderDept(\''+d.id+'\',1)">'+svgIcon('chevronRight',14)+'</button>'+
+      '</td><td><b>'+escapeHtml(d.name)+'</b></td><td>'+svgIcon(d.icon,20)+'</td>'+
+      '<td>'+(d.active? '<span class="badge-req req">Active</span>' : '<span class="badge-inactive">Inactive</span>')+'</td>'+
+      '<td><button class="iconlink" onclick="openDeptModal(\''+d.id+'\')">Edit</button></td></tr>').join('')+
+    '</tbody></table></div>';
+}
+function reorderDept(id,dir){
+  const state=STORE.get(); const depts=state.departments.slice().sort((a,b)=>a.order-b.order);
+  const idx=depts.findIndex(d=>d.id===id); const swapIdx=idx+dir;
+  if(swapIdx<0||swapIdx>=depts.length) return;
+  const tmp=depts[idx].order; depts[idx].order=depts[swapIdx].order; depts[swapIdx].order=tmp;
+  STORE.save(state); paintDepartments(document.getElementById('adminMain'));
+}
+function openDeptModal(id){
+  const d=id? STORE.get().departments.find(x=>x.id===id) : null;
+  const icons=['leaf','foot','droplet','lungs','ribbon','star','chef','puzzle','dumbbell','palette','stretch','shield','search','pulse','community','plate'];
+  const modal=document.createElement('div'); modal.className='modal-backdrop'; modal.id='modalBackdrop';
+  modal.innerHTML='<div class="modal"><h3>'+(d?'Edit section':'Add section')+'</h3>'+
+    '<div class="field"><label>Name</label><input id="mDeptName" value="'+(d?escapeHtml(d.name):'')+'"></div>'+
+    '<div class="field"><label>Icon</label><select id="mDeptIcon">'+icons.map(i=>'<option value="'+i+'" '+(d&&d.icon===i?'selected':'')+'>'+i+'</option>').join('')+'</select></div>'+
+    (d? '<div class="checkline"><input type="checkbox" id="mDeptActive" '+(d.active?'checked':'')+'><label for="mDeptActive">Active</label></div>' : '')+
+    '<div class="modal-actions">'+
+      (d? '<button class="btn btn-outline btn-sm" style="color:var(--danger); border-color:var(--danger);" onclick="deleteDeptConfirm(\''+d.id+'\')">Delete</button>' : '')+
+      '<button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="saveDeptModal('+(d?"'"+d.id+"'":'null')+')">Save</button>'+
+    '</div></div>';
+  document.body.appendChild(modal);
+}
+function saveDeptModal(id){
+  const name=document.getElementById('mDeptName').value.trim();
+  const icon=document.getElementById('mDeptIcon').value;
+  if(!name){ toast('Name is required.'); return; }
+  if(id){ const activeEl=document.getElementById('mDeptActive'); STORE.updateDepartment(id,{name:name,icon:icon, active:activeEl?activeEl.checked:true}); }
+  else STORE.addDepartment({name:name,icon:icon});
+  closeModal(); paintDepartments(document.getElementById('adminMain')); toast('Section saved.');
+}
+function deleteDeptConfirm(id){ if(confirm('Delete this section and its activities?')){ STORE.deleteDepartment(id); closeModal(); paintDepartments(document.getElementById('adminMain')); } }
+function closeModal(){ const m=document.getElementById('modalBackdrop'); if(m) m.remove(); }
+
+function paintActivities(main){
+  const state=STORE.get();
+  const acts=state.activities.slice().sort((a,b)=>a.order-b.order);
+  main.innerHTML='<div class="admin-header"><h2>Activities</h2><button class="btn btn-primary btn-sm" onclick="openActModal()">Add activity</button></div>'+
+    '<div class="table-wrap"><table><thead><tr><th>Order</th><th>Activity ID / QR</th><th>Activity</th><th>Section</th><th>Stamp</th><th>Counts to reward</th><th>Status</th><th></th></tr></thead><tbody>'+
+    acts.map((a,i)=>{ const dept=state.departments.find(d=>d.id===a.deptId); return '<tr><td>'+
+      '<button class="iconlink" '+(i===0?'disabled':'')+' onclick="reorderAct(\''+a.id+'\',-1)">'+svgIcon('chevronLeft',14)+'</button>'+
+      '<button class="iconlink" '+(i===acts.length-1?'disabled':'')+' onclick="reorderAct(\''+a.id+'\',1)">'+svgIcon('chevronRight',14)+'</button>'+
+      '</td><td class="mono">'+a.id+'</td><td><span class="swatch" style="background:'+(INK_COLORS[a.stampColor]||'#ccc')+';"></span><b>'+escapeHtml(a.title)+'</b></td><td>'+(dept?escapeHtml(dept.name):'—')+'</td>'+
+      '<td>'+(a.hasStamp!==false?'<span class="badge-req req">Yes</span>':'<span class="badge-req opt">No</span>')+'</td>'+
+      '<td>'+(a.countsTowardReward?'<span class="badge-req req">Counts</span>':'<span class="badge-req opt">Bonus</span>')+'</td><td>'+(a.active?'Active':'<span class="badge-inactive">Inactive</span>')+'</td><td><button class="iconlink" onclick="openActModal(\''+a.id+'\')">Edit</button></td></tr>'; }).join('')+
+    '</tbody></table></div>';
+}
+function reorderAct(id,dir){
+  const state=STORE.get(); const acts=state.activities.slice().sort((a,b)=>a.order-b.order);
+  const idx=acts.findIndex(a=>a.id===id); const swapIdx=idx+dir;
+  if(swapIdx<0||swapIdx>=acts.length) return;
+  const tmp=acts[idx].order; acts[idx].order=acts[swapIdx].order; acts[swapIdx].order=tmp;
+  STORE.save(state); paintActivities(document.getElementById('adminMain'));
+}
+function openActModal(id){
+  const state=STORE.get();
+  const a=id? state.activities.find(x=>x.id===id) : null;
+  const icons=['leaf','foot','droplet','lungs','ribbon','star','chef','puzzle','dumbbell','palette','stretch','shield','search','pulse','community','plate'];
+  const colors=Object.keys(INK_COLORS);
+  const modal=document.createElement('div'); modal.className='modal-backdrop'; modal.id='modalBackdrop';
+  modal.innerHTML='<div class="modal"><h3>'+(a?'Edit activity':'Add activity')+'</h3>'+
+    '<div class="field"><label>Title</label><input id="mActTitle" value="'+(a?escapeHtml(a.title):'')+'"></div>'+
+    '<div class="field"><label>Department</label><select id="mActDept">'+state.departments.map(d=>'<option value="'+d.id+'" '+(a&&a.deptId===d.id?'selected':'')+'>'+escapeHtml(d.name)+'</option>').join('')+'</select></div>'+
+    '<div class="field"><label>Description</label><textarea id="mActDesc" rows="2">'+(a?escapeHtml(a.description):'')+'</textarea></div>'+
+    '<div class="form-row">'+
+      '<div class="field"><label>Icon</label><select id="mActIcon">'+icons.map(i=>'<option value="'+i+'" '+(a&&a.icon===i?'selected':'')+'>'+i+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label>Stamp colour</label><select id="mActColor">'+colors.map(c=>'<option value="'+c+'" '+(a&&a.stampColor===c?'selected':'')+'>'+c+'</option>').join('')+'</select></div>'+
+    '</div>'+
+    '<div class="checkline" style="margin-bottom:10px;"><input type="checkbox" id="mActHasStamp" '+((!a||a.hasStamp!==false)?'checked':'')+'><label for="mActHasStamp">Qualifies for a passport stamp</label></div>'+
+    '<div class="checkline" style="margin-bottom:10px;"><input type="checkbox" id="mActCounts" '+((!a||a.countsTowardReward)?'checked':'')+'><label for="mActCounts">Counts toward the giveaway</label></div>'+
+    (a? '<div class="checkline"><input type="checkbox" id="mActActive" '+(a.active?'checked':'')+'><label for="mActActive">Active</label></div>' : '')+
+    '<div class="modal-actions">'+
+      (a? '<button class="btn btn-outline btn-sm" style="color:var(--danger); border-color:var(--danger);" onclick="deleteActConfirm(\''+a.id+'\')">Delete</button>' : '')+
+      '<button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="saveActModal('+(a?"'"+a.id+"'":'null')+')">Save</button>'+
+    '</div></div>';
+  document.body.appendChild(modal);
+}
+function saveActModal(id){
+  const title=document.getElementById('mActTitle').value.trim();
+  const deptId=document.getElementById('mActDept').value;
+  const description=document.getElementById('mActDesc').value.trim();
+  const icon=document.getElementById('mActIcon').value;
+  const stampColor=document.getElementById('mActColor').value;
+  const countsTowardReward=document.getElementById('mActCounts').checked;
+  const hasStamp=document.getElementById('mActHasStamp').checked;
+  if(!title){ toast('Title is required.'); return; }
+  if(id){ const activeEl=document.getElementById('mActActive'); STORE.updateActivity(id,{title,deptId,description,icon,stampColor,countsTowardReward,hasStamp, active:activeEl?activeEl.checked:true}); }
+  else STORE.addActivity({title,deptId,description,icon,stampColor,countsTowardReward,hasStamp});
+  closeModal(); paintActivities(document.getElementById('adminMain')); toast('Activity saved.');
+}
+function deleteActConfirm(id){ if(confirm('Delete this activity? Existing stamp records for it are kept but hidden.')){ STORE.deleteActivity(id); closeModal(); paintActivities(document.getElementById('adminMain')); } }
+
+function paintParticipants(main){
+  const state=STORE.get();
+  const list=Object.values(state.participants).sort((a,b)=>new Date(b.registrationDateTime)-new Date(a.registrationDateTime));
+  main.innerHTML='<div class="admin-header"><h2>Participants</h2><span class="muted small">'+list.length+' registered</span></div>'+
+    '<div class="table-wrap"><table><thead><tr><th>Name</th><th>Passport ID</th><th>Registered</th><th>Stamps</th><th>Completion</th><th>Gift</th><th>All activities</th></tr></thead><tbody>'+
+    (list.length? list.map(p=>{ const prog=STORE.getProgress(p.passportId); const reward=STORE.getReward(p.passportId);
+      const pct = prog.threshold ? Math.round(Math.min(prog.collectedPool,prog.threshold)/prog.threshold*100) : 0;
+      return '<tr><td><b>'+escapeHtml(p.name)+'</b></td><td class="mono">'+p.passportId+'</td><td>'+formatDateTime(p.registrationDateTime)+'</td><td>'+prog.collectedPool+'/'+prog.threshold+(prog.bonusTotal?' (+'+prog.collectedBonus+' bonus)':'')+'</td><td>'+pct+'%</td><td>'+(reward? (reward.giftCollected? '<span class="pill-status done">Collected</span>':'<span class="chip">Unlocked</span>') : '<span class="muted small">—</span>')+'</td>'+
+      '<td>'+(p.allActivitiesCompleted? '<span class="pill-status done">'+prog.collectedPool+'/'+prog.poolTotal+'</span>' : prog.collectedPool+'/'+prog.poolTotal)+'</td></tr>'; }).join('')
+      : '<tr><td colspan="7" class="muted small" style="text-align:center; padding:24px;">No registrations yet — register a test passport from the participant view to see it here.</td></tr>')+
+    '</tbody></table></div>';
+}
+function paintQR(main){
+  const state=STORE.get();
+  const acts=state.activities.slice().sort((a,b)=>a.order-b.order);
+  main.innerHTML='<div class="admin-header"><h2>QR code management</h2><button class="btn btn-outline btn-sm" onclick="window.print()">Print / save as PDF (one sign per page)</button></div>'+
+    '<div id="print-area">'+
+    '<div class="qr-sign card" style="max-width:260px; margin-bottom:22px;"><span class="chip" style="margin-bottom:10px;">MAIN EVENT QR</span><div class="qr-card" style="background:transparent; border:none; padding:0;"><div id="entranceQR"></div><p class="small muted" style="margin-top:10px;">Post at the showcase entrance. New visitors register, returning visitors reopen their passport.</p></div></div>'+
+    '<h3 class="no-print" style="font-size:14px; margin-bottom:10px;">Activity QR codes</h3>'+
+    '<div class="qr-grid">'+acts.map(a=>{ const dept=state.departments.find(d=>d.id===a.deptId);
+      return '<div class="qr-sign qr-card"><div id="qr-'+a.id+'"></div>'+
+        '<b class="small" style="display:block; margin-top:10px;">'+escapeHtml(a.title)+'</b>'+
+        '<span class="small muted">'+(dept?escapeHtml(dept.name):'—')+'</span><br>'+
+        '<span class="small muted mono">'+a.id+(a.active?'':' · inactive')+'</span>'+
+        '<p class="small" style="font-weight:800; letter-spacing:.3px; margin:10px 0 1px;">COMPLETE THE ACTIVITY</p>'+
+        '<p class="small muted" style="margin:0 0 10px;">Scan to collect your stamp</p>'+
+        '<button class="btn btn-outline btn-sm no-print" onclick="downloadActivityQR(\''+a.id+'\')">Download PNG</button>'+
+      '</div>'; }).join('')+
+    '</div></div>'+
+    '<div class="divider no-print"></div>'+
+    '<h3 style="font-size:14px; margin-bottom:10px;">Staff &amp; admin access QR codes</h3>'+
+    '<p class="small muted" style="margin:-4px 0 10px;">These open the sign-in screen only — the access code is never stored in the QR code itself, so scanning one does not by itself grant entry.</p>'+
+    '<div class="qr-grid" style="margin-bottom:20px;">'+
+      '<div class="qr-sign qr-card"><span class="chip" style="margin-bottom:8px;">ADMIN DASHBOARD</span><div id="qrAdminDash"></div>'+
+      '<p class="small muted" style="margin-top:10px;">Opens the admin sign-in screen. Keep this QR code for organizers only.</p>'+
+      '<button class="btn btn-outline btn-sm no-print" onclick="downloadNamedQR(\'qrAdminDash\',\'adphc-qr-admin-dashboard.png\')">Download PNG</button></div>'+
+      '<div class="qr-sign qr-card"><span class="chip" style="margin-bottom:8px;">STAFF GIFT DESK</span><div id="qrStaffDesk"></div>'+
+      '<p class="small muted" style="margin-top:10px;">Opens the staff desk sign-in screen for verifying and marking gift collection.</p>'+
+      '<button class="btn btn-outline btn-sm no-print" onclick="downloadNamedQR(\'qrStaffDesk\',\'adphc-qr-staff-desk.png\')">Download PNG</button></div>'+
+    '</div>'+
+    '<div class="divider no-print"></div>'+
+    '<div class="card no-print"><h3 style="font-size:14px;">Data backup</h3><p class="small muted">Download a JSON snapshot of every section, activity, participant and stamp record — useful before wiring this up to a real backend, or as a safety copy.</p><div class="row" style="gap:10px;"><button class="btn btn-outline btn-sm" onclick="downloadBackup()">Download backup (.json)</button><button class="btn btn-outline btn-sm" style="color:var(--danger); border-color:var(--danger);" onclick="resetAllConfirm()">Reset demo data</button></div></div>';
+  renderQRInto('entranceQR', baseUrl(), 170, '#000000', 'H');
+  acts.forEach(a=> renderQRInto('qr-'+a.id, baseUrl()+ACT_PREFIX+a.id, 150, '#000000', 'H'));
+  renderQRInto('qrAdminDash', baseUrl()+'#/admin', 150, '#000000', 'H');
+  renderQRInto('qrStaffDesk', baseUrl()+'#/redeem', 150, '#000000', 'H');
+}
+function paintRewardSettings(main){
+  const state=STORE.get();
+  const poolTotal=state.activities.filter(a=>a.active && a.countsTowardReward).length;
+  const g=Object.assign({}, defaultGiveaway(), state.meta.giveaway||{});
+  main.innerHTML='<div class="admin-header"><h2>Reward rules</h2></div>'+
+    '<div class="card" style="max-width:520px;">'+
+      '<div class="checkline" style="margin-bottom:14px;"><input type="checkbox" id="rEnabled" '+(g.enabled!==false?'checked':'')+'><label for="rEnabled">Giveaway enabled</label></div>'+
+      '<div class="stat-grid" style="margin-bottom:14px;">'+statTile(poolTotal,'Total active qualifying activities')+'</div>'+
+      '<div class="field"><label>Minimum stamps required to unlock the gift</label>'+
+        '<input id="rMinStamps" type="number" min="1" max="'+Math.max(1,poolTotal)+'" value="'+(state.meta.minStampsRequired||1)+'">'+
+        '<span class="field-hint">Out of '+poolTotal+' active '+(poolTotal===1?'activity that currently counts':'activities that currently count')+' toward the giveaway. Participants can keep collecting the rest for fun after they unlock the gift.</span>'+
+      '</div>'+
+      '<div class="divider"></div>'+
+      '<div class="field"><label>Reward eyebrow</label><input id="rEyebrow" value="'+escapeHtml(g.eyebrow)+'"></div>'+
+      '<div class="field"><label>Gift unlocked heading</label><input id="rHeading" value="'+escapeHtml(g.heading)+'"></div>'+
+      '<div class="field"><label>Gift unlocked message</label><input id="rSubheading" value="'+escapeHtml(g.subheading)+'"></div>'+
+      '<div class="field"><label>Collection instructions</label><textarea id="rInstructions" rows="2">'+escapeHtml(g.instructions)+'</textarea></div>'+
+      '<div class="field"><label>Gift collection location</label><input id="rCollectionPoint" value="'+escapeHtml(g.collectionPoint)+'" placeholder="e.g. To be confirmed"></div>'+
+      '<div class="divider"></div>'+
+      '<div class="field"><label>Passport-complete heading (all activities, no gift by default)</label><input id="rCompletionHeading" value="'+escapeHtml(g.completionHeading)+'"></div>'+
+      '<div class="field"><label>Passport-complete message</label><input id="rCompletionSubheading" value="'+escapeHtml(g.completionSubheading)+'"></div>'+
+      '<div class="checkline" style="margin-bottom:14px;"><input type="checkbox" id="rSecondGift" '+(g.secondCelebrationGiftEnabled?'checked':'')+'><label for="rSecondGift">Also mark a bonus gift when a participant completes all activities (future use)</label></div>'+
+      '<button class="btn btn-primary" onclick="saveRewardSettings()">Save reward rules</button>'+
+    '</div>';
+}
+function saveRewardSettings(){
+  const state=STORE.get();
+  const poolTotal=state.activities.filter(a=>a.active && a.countsTowardReward).length;
+  let min=parseInt(document.getElementById('rMinStamps').value,10)||1;
+  min=Math.max(1, Math.min(min, Math.max(1,poolTotal)));
+  state.meta.minStampsRequired=min;
+  state.meta.giveaway={
+    enabled:document.getElementById('rEnabled').checked,
+    eyebrow:document.getElementById('rEyebrow').value.trim()||'GIFT UNLOCKED',
+    heading:document.getElementById('rHeading').value.trim()||'Gift Unlocked!',
+    subheading:document.getElementById('rSubheading').value.trim()||'Great job! You’ve unlocked your giveaway.',
+    instructions:document.getElementById('rInstructions').value.trim()||'Please visit the giveaway point to collect your gift.',
+    collectionPoint:document.getElementById('rCollectionPoint').value.trim()||'To be confirmed',
+    completionHeading:document.getElementById('rCompletionHeading').value.trim()||'Passport Complete!',
+    completionSubheading:document.getElementById('rCompletionSubheading').value.trim()||'You explored all Community Health experiences!',
+    secondCelebrationGiftEnabled:document.getElementById('rSecondGift').checked
+  };
+  STORE.save(state);
+  toast('Reward rules saved.');
+  paintRewardSettings(document.getElementById('adminMain'));
+}
+function resetAllConfirm(){ if(confirm('This clears all participants, stamps and custom activities on this device. Continue?')){ STORE.resetAll(); paintOverview(document.getElementById('adminMain')); adminTab='overview'; toast('Demo data reset.'); } }
+
+/* ==================================== BOOT ==================================== */
+function boot(initData){
+  if(initData && initData.hash){ location.hash=initData.hash; }
+  render();
+}
+try{
+  if(window.claude && window.claude.hot && window.claude.hot.snapshot){
+    window.claude.hot.snapshot(function(){ return {hash: location.hash}; });
+  }
+}catch(e){}
+if(window.claude && window.claude.hot && window.claude.hot.ready){ window.claude.hot.ready(boot); }
+else boot((window.claude && window.claude.hot && window.claude.hot.data) || {});
+</script>
